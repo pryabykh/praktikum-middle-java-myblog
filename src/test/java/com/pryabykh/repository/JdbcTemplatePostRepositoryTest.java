@@ -2,6 +2,7 @@ package com.pryabykh.repository;
 
 import com.pryabykh.model.Post;
 import configuration.H2DataSourceConfiguration;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,6 +26,12 @@ public class JdbcTemplatePostRepositoryTest {
 
     @Autowired
     private PostRepository postRepository;
+
+    @BeforeEach
+    void setUp() {
+        jdbcTemplate.execute("DELETE FROM myblog.posts");
+    }
+
 
     @Test
     void save_whenValidPostWithoutId_ShouldInsertPostToDatabase() {
