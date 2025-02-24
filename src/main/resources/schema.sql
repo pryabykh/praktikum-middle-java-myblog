@@ -21,7 +21,7 @@ create index if not exists myblog_comments_post_id_index on myblog.comments (pos
 create table if not exists myblog.tags
 (
     id      serial primary key,
-    content text not null
+    content text not null unique
 );
 
 create table if not exists myblog.posts_tags
