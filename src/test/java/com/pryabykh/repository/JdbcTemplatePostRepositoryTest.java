@@ -30,9 +30,9 @@ public class JdbcTemplatePostRepositoryTest {
     @BeforeEach
     void setUp() {
         jdbcTemplate.execute("DELETE FROM myblog.posts_tags");
+        jdbcTemplate.execute("DELETE FROM myblog.comments");
         jdbcTemplate.execute("DELETE FROM myblog.posts");
         jdbcTemplate.execute("DELETE FROM myblog.tags");
-        jdbcTemplate.execute("DELETE FROM myblog.comments");
     }
 
 
