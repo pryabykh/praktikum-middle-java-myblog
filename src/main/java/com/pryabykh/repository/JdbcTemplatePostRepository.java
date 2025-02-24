@@ -1,6 +1,7 @@
 package com.pryabykh.repository;
 
 import com.pryabykh.model.Post;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Optional;
 
 @Repository
 public class JdbcTemplatePostRepository implements PostRepository {
@@ -23,6 +25,27 @@ public class JdbcTemplatePostRepository implements PostRepository {
             return insert(post);
         } else {
             return update(post);
+        }
+    }
+
+    @Override
+    public Optional<Post> findById(Long postId) {
+        String selectSql = """
+                select * from myblog.posts where id = ?
+                """;
+        try {
+            Post post = jdbcTemplate.queryForObject(selectSql, (resultSet, rowNum) -> {
+                Post p = new Post();
+                p.setId(resultSet.getLong("id"));
+                p.setTitle(resultSet.getString("title"));
+                p.setBase64Image(resultSet.getString("base_64_image"));
+                p.setContent(resultSet.getString("content"));
+                p.setLikes(resultSet.getLong("likes"));
+                return p;
+            }, postId);
+            return Optional.ofNullable(post);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            return Optional.empty();
         }
     }
 

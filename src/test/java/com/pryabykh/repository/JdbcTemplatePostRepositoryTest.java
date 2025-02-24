@@ -9,9 +9,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringJUnitConfig(classes = {H2DataSourceConfiguration.class, JdbcTemplatePostRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
@@ -66,6 +69,28 @@ public class JdbcTemplatePostRepositoryTest {
         assertThrows(DataIntegrityViolationException.class, () -> postRepository.save(postWithoutTitle));
         assertThrows(DataIntegrityViolationException.class, () -> postRepository.save(postWithoutImage));
         assertThrows(DataIntegrityViolationException.class, () -> postRepository.save(postWithoutContent));
+    }
+
+    @Test
+    void findById_whenPostExist_ShouldReturnPost() {
+        Post post = new Post("Название поста", "base64data", "text content");
+        long postId = postRepository.save(post);
+        Optional<Post> optionalPost = postRepository.findById(postId);
+
+        assertTrue(optionalPost.isPresent());
+        Post savedPost = optionalPost.get();
+        assertEquals(postId, savedPost.getId());
+        assertEquals("Название поста", savedPost.getTitle());
+        assertEquals("base64data", savedPost.getBase64Image());
+        assertEquals("text content", savedPost.getContent());
+        assertEquals(0, savedPost.getLikes());
+    }
+
+    @Test
+    void findById_whenPostDoesNotExist_ShouldReturnNull() {
+        Optional<Post> optionalPost = postRepository.findById(Long.MAX_VALUE);
+
+        assertTrue(optionalPost.isEmpty());
     }
 
     private Post findPostById(long postId) {
