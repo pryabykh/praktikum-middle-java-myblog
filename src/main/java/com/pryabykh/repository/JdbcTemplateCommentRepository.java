@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 
 @Repository
 public class JdbcTemplateCommentRepository implements CommentRepository {
@@ -24,6 +25,21 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
         } else {
             return update(comment);
         }
+    }
+
+    @Override
+    public List<Comment> findAllByPostId(long postId) {
+        String selectSql = """
+                select * from myblog.comments where post_id = ? order by id desc
+                """;
+
+        return jdbcTemplate.query(selectSql, (resultSet, rowNum) -> {
+            Comment c = new Comment();
+            c.setId(resultSet.getLong("id"));
+            c.setContent(resultSet.getString("content"));
+            c.setPostId(resultSet.getLong("post_id"));
+            return c;
+        }, postId);
     }
 
     private long insert(Comment comment) {

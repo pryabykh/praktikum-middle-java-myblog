@@ -10,6 +10,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -71,6 +73,42 @@ public class JdbcTemplateCommentRepositoryTest extends AbstractJdbcTemplateRepos
         Comment commentWithoutContent = new Comment(null, postId);
 
         assertThrows(DataIntegrityViolationException.class, () -> commentRepository.save(commentWithoutContent));
+    }
+
+    @Test
+    void findAllByPostId_whenCommentsExist_ShouldReturnListOfComments() {
+        Long postId = insertPost(jdbcTemplate);
+        Comment comment1 = new Comment("Comment content1", postId);
+        Comment comment2 = new Comment("Comment content2", postId);
+        Comment comment3 = new Comment("Comment content3", postId);
+
+        long commentId1 = commentRepository.save(comment1);
+        long commentId2 = commentRepository.save(comment2);
+        long commentId3 = commentRepository.save(comment3);
+
+        List<Comment> comments = commentRepository.findAllByPostId(postId);
+
+        assertNotNull(comments);
+        assertEquals(3, comments.size());
+
+        Comment savedComment1 = comments.get(2);
+        Comment savedComment2 = comments.get(1);
+        Comment savedComment3 = comments.get(0);
+
+        assertNotNull(savedComment1);
+        assertEquals(commentId1, savedComment1.getId());
+        assertEquals("Comment content1", savedComment1.getContent());
+        assertEquals(postId, savedComment1.getPostId());
+
+        assertNotNull(savedComment2);
+        assertEquals(commentId2, savedComment2.getId());
+        assertEquals("Comment content2", savedComment2.getContent());
+        assertEquals(postId, savedComment2.getPostId());
+
+        assertNotNull(savedComment3);
+        assertEquals(commentId3, savedComment3.getId());
+        assertEquals("Comment content3", savedComment3.getContent());
+        assertEquals(postId, savedComment3.getPostId());
     }
 
     private Comment findCommentById(long postId) {
