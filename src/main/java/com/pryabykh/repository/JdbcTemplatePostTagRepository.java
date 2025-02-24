@@ -20,4 +20,13 @@ public class JdbcTemplatePostTagRepository implements PostTagRepository {
 
         jdbcTemplate.update(insertSql, postTag.getPostId(), postTag.getTagId());
     }
+
+    @Override
+    public void deleteByPostId(Long postId) {
+        String deleteSql = """
+                delete from myblog.posts_tags where post_id = ?
+                """;
+
+        jdbcTemplate.update(deleteSql, postId);
+    }
 }

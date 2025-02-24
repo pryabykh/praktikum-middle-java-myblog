@@ -40,7 +40,7 @@ public class JdbcTemplatePostTagRepositoryTest {
     @Test
     void save_whenValidPostTag_ShouldInsertPostTagToDatabase() {
         Long postId = insertPost();
-        Long tagId = insertTag();
+        Long tagId = insertTag("Tag");
 
         PostTag postTag = new PostTag(postId, tagId);
         postTagRepository.save(postTag);
@@ -52,6 +52,28 @@ public class JdbcTemplatePostTagRepositoryTest {
         assertEquals(tagId, savedPostTag.getTagId());
     }
 
+    @Test
+    void deleteByPostId_whenEntitiesExist_ShouldDeleteThemByPostId() {
+        Long postId = insertPost();
+        Long tagId1 = insertTag("Tag1");
+        Long tagId2 = insertTag("Tag2");
+        Long tagId3 = insertTag("Tag3");
+
+        PostTag postTag1 = new PostTag(postId, tagId1);
+        PostTag postTag2 = new PostTag(postId, tagId2);
+        PostTag postTag3 = new PostTag(postId, tagId3);
+
+        postTagRepository.save(postTag1);
+        postTagRepository.save(postTag2);
+        postTagRepository.save(postTag3);
+
+        assertEquals(3L, countAll());
+
+        postTagRepository.deleteByPostId(postId);
+
+        assertEquals(0L, countAll());
+    }
+
     private PostTag findPostTag() {
         String query = "select * from myblog.posts_tags";
         return jdbcTemplate.queryForObject(query, (resultSet, rowNum) -> {
@@ -60,6 +82,11 @@ public class JdbcTemplatePostTagRepositoryTest {
             pt.setTagId(resultSet.getLong("tag_id"));
             return pt;
         });
+    }
+
+    private Long countAll() {
+        String query = "select count(*) from myblog.posts_tags";
+        return jdbcTemplate.queryForObject(query, Long.class);
     }
 
     private Long insertPost() {
@@ -86,8 +113,8 @@ public class JdbcTemplatePostTagRepositoryTest {
         }
     }
 
-    private Long insertTag() {
-        Tag tag = new Tag("Tag");
+    private Long insertTag(String name) {
+        Tag tag = new Tag(name);
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         String insertSql = """
