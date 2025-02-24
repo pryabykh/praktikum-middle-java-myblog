@@ -1,6 +1,5 @@
 package com.pryabykh.repository;
 
-import com.pryabykh.model.Post;
 import com.pryabykh.model.Tag;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,6 +40,24 @@ public class JdbcTemplateTagRepository implements TagRepository {
                 t.setContent(resultSet.getString("content"));
                 return t;
             }, tagId);
+            return Optional.ofNullable(tag);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Tag> findByContent(String content) {
+        String selectSql = """
+                select * from myblog.tags where content = ?
+                """;
+        try {
+            Tag tag = jdbcTemplate.queryForObject(selectSql, (resultSet, rowNum) -> {
+                Tag t = new Tag();
+                t.setId(resultSet.getLong("id"));
+                t.setContent(resultSet.getString("content"));
+                return t;
+            }, content);
             return Optional.ofNullable(tag);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
             return Optional.empty();

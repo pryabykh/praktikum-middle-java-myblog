@@ -99,6 +99,25 @@ public class JdbcTemplateTagRepositoryTest {
         assertTrue(optionalTag.isEmpty());
     }
 
+    @Test
+    void findByContent_whenTagExist_ShouldReturnTag() {
+        Tag tag = new Tag("Tag");
+        long tagId = tagRepository.save(tag);
+        Optional<Tag> optionalTag = tagRepository.findByContent("Tag");
+
+        assertTrue(optionalTag.isPresent());
+        Tag savedTag = optionalTag.get();
+        assertEquals(tagId, savedTag.getId());
+        assertEquals("Tag", savedTag.getContent());
+    }
+
+    @Test
+    void findByContent_whenTagDoesNotExist_ShouldReturnNull() {
+        Optional<Tag> optionalTag = tagRepository.findByContent("test non existed tag");
+
+        assertTrue(optionalTag.isEmpty());
+    }
+
     private Tag findTagById(long postId) {
         String query = "select * from myblog.tags where id = ?";
         return jdbcTemplate.queryForObject(query, (resultSet, rowNum) -> {

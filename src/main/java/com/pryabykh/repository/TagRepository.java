@@ -9,4 +9,6 @@ public interface TagRepository {
     long save(Tag tag);
 
     Optional<Tag> findById(Long tagId);
+
+    Optional<Tag> findByContent(String content);
 }
