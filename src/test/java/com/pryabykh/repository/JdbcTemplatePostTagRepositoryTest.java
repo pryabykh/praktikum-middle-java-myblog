@@ -1,27 +1,20 @@
 package com.pryabykh.repository;
 
-import com.pryabykh.model.Post;
 import com.pryabykh.model.PostTag;
-import com.pryabykh.model.Tag;
 import configuration.H2DataSourceConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringJUnitConfig(classes = {H2DataSourceConfiguration.class, JdbcTemplatePostTagRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
-public class JdbcTemplatePostTagRepositoryTest {
+public class JdbcTemplatePostTagRepositoryTest extends AbstractJdbcTemplateRepositoryTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -39,8 +32,8 @@ public class JdbcTemplatePostTagRepositoryTest {
 
     @Test
     void save_whenValidPostTag_ShouldInsertPostTagToDatabase() {
-        Long postId = insertPost();
-        Long tagId = insertTag("Tag");
+        Long postId = insertPost(jdbcTemplate);
+        Long tagId = insertTag("Tag", jdbcTemplate);
 
         PostTag postTag = new PostTag(postId, tagId);
         postTagRepository.save(postTag);
@@ -54,10 +47,10 @@ public class JdbcTemplatePostTagRepositoryTest {
 
     @Test
     void deleteByPostId_whenEntitiesExist_ShouldDeleteThemByPostId() {
-        Long postId = insertPost();
-        Long tagId1 = insertTag("Tag1");
-        Long tagId2 = insertTag("Tag2");
-        Long tagId3 = insertTag("Tag3");
+        Long postId = insertPost(jdbcTemplate);
+        Long tagId1 = insertTag("Tag1", jdbcTemplate);
+        Long tagId2 = insertTag("Tag2", jdbcTemplate);
+        Long tagId3 = insertTag("Tag3", jdbcTemplate);
 
         PostTag postTag1 = new PostTag(postId, tagId1);
         PostTag postTag2 = new PostTag(postId, tagId2);
@@ -87,51 +80,5 @@ public class JdbcTemplatePostTagRepositoryTest {
     private Long countAll() {
         String query = "select count(*) from myblog.posts_tags";
         return jdbcTemplate.queryForObject(query, Long.class);
-    }
-
-    private Long insertPost() {
-        Post post = new Post("title", "image", "content");
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        String insertSql = """
-                insert into myblog.posts (title, base_64_image, content) values (?, ?, ?)
-                """;
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, post.getTitle());
-            ps.setString(2, post.getBase64Image());
-            ps.setString(3, post.getContent());
-            return ps;
-        }, keyHolder);
-
-        Number id = keyHolder.getKey();
-        if (id != null) {
-            return id.longValue();
-        } else {
-            throw new IllegalArgumentException("Не удалось получить id при создании Post");
-        }
-    }
-
-    private Long insertTag(String name) {
-        Tag tag = new Tag(name);
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-
-        String insertSql = """
-                insert into myblog.tags (content) values (?)
-                """;
-
-        jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
-            ps.setString(1, tag.getContent());
-            return ps;
-        }, keyHolder);
-
-        Number id = keyHolder.getKey();
-        if (id != null) {
-            return id.longValue();
-        } else {
-            throw new IllegalArgumentException("Не удалось получить id при создании Tag");
-        }
     }
 }
