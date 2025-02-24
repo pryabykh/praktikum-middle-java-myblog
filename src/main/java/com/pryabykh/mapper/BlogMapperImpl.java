@@ -27,7 +27,10 @@ public class BlogMapperImpl implements BlogMapper {
         postDto.setId(post.getId());
         postDto.setTitle(post.getTitle());
         postDto.setContent(post.getContent());
+        postDto.setLikes(post.getLikes());
         postDto.setBase64Image(post.getBase64Image());
+        post.setLikes(post.getLikes());
+        postDto.setCommentsCount(post.getCommentsCount());
         return postDto;
     }
 

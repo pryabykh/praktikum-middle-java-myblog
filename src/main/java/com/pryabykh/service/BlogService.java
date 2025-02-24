@@ -1,5 +1,6 @@
 package com.pryabykh.service;
 
+import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 
 public interface BlogService {
@@ -9,4 +10,6 @@ public interface BlogService {
     long update(Long postId, PostDto dto);
 
     PostDto findById(Long postId);
+
+    Page findAll(String tag, int pageNumber, int pageSize);
 }

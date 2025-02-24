@@ -1,5 +1,6 @@
 package com.pryabykh.service;
 
+import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapperImpl;
 import com.pryabykh.model.Comment;
@@ -94,7 +95,7 @@ public class BlogServiceImplTest {
     @Test
     void findById_WhenPostExists_ShouldReturnPost() {
         when(postRepository.findById(10L))
-                .thenReturn(Optional.of(new Post(10L, "title", "image", "content")));
+                .thenReturn(Optional.of(new Post(10L, "title", "image", "content", 100L, 5L)));
         when(tagRepository.findAllByPostId(10L)).thenReturn(List.of(
                 new Tag(1L, "tag1"),
                 new Tag(2L, "tag2")
@@ -110,6 +111,8 @@ public class BlogServiceImplTest {
         assertEquals("title", postDto.getTitle());
         assertEquals("image", postDto.getBase64Image());
         assertEquals("content", postDto.getContent());
+        assertEquals(100L, postDto.getLikes());
+        assertEquals(5L, postDto.getCommentsCount());
 
         assertEquals("tag1", postDto.getTags().get(0));
         assertEquals("tag2", postDto.getTags().get(1));
@@ -123,6 +126,12 @@ public class BlogServiceImplTest {
         verify(postRepository, times(1)).findById(eq(10L));
         verify(tagRepository, times(1)).findAllByPostId(eq(10L));
         verify(commentRepository, times(1)).findAllByPostId(eq(10L));
+    }
+
+    @Test
+    void findAll_WhenPostsExists_ShouldReturnPosts() {
+        Page test = blogService.findAll("test", 0, 10);
+        //todo: crete test
     }
 
     @Configuration

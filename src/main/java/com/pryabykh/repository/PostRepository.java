@@ -13,7 +13,7 @@ public interface PostRepository {
 
     Optional<Post> findById(Long postId);
 
-    long countByTag(String tag);
+    int countByTag(String tag);
 
     List<Post> findAllByTag(String tag, int pageNumber, int pageSize);
 }

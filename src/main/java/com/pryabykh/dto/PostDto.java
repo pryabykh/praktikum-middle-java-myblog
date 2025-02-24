@@ -13,6 +13,10 @@ public class PostDto {
 
     private String content;
 
+    private Long likes;
+
+    private Long commentsCount;
+
     private List<String> tags = new ArrayList<>();
 
     private List<CommentDto> comments = new ArrayList<>();
@@ -57,6 +61,22 @@ public class PostDto {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getLikes() {
+        return likes;
+    }
+
+    public void setLikes(Long likes) {
+        this.likes = likes;
+    }
+
+    public Long getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(Long commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public List<String> getTags() {

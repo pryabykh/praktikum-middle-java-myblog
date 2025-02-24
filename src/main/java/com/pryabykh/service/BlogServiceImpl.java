@@ -1,5 +1,6 @@
 package com.pryabykh.service;
 
+import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapper;
 import com.pryabykh.model.Post;
@@ -11,6 +12,11 @@ import com.pryabykh.repository.PostTagRepository;
 import com.pryabykh.repository.TagRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class BlogServiceImpl implements BlogService {
@@ -66,6 +72,25 @@ public class BlogServiceImpl implements BlogService {
                     return postDto;
                 })
                 .orElseThrow();
+    }
+
+    @Override
+    public Page findAll(String tag, int pageNumber, int pageSize) {
+        List<PostDto> posts = postRepository.findAllByTag(tag, pageNumber, pageSize)
+                .stream()
+                .map(blogMapper::toPostDto)
+                .toList();
+        Map<Long, List<Tag>> tagsByPostId = tagRepository.findAllByPostIdIn(posts.stream().map(PostDto::getId).toList())
+                .stream()
+                .collect(Collectors.groupingBy(Tag::getPostId));
+        posts.forEach(post -> {
+            post.setTags(tagsByPostId.get(post.getId()).stream().map(Tag::getContent).toList());
+        });
+        return new Page(
+                postRepository.countByTag(tag),
+                pageSize,
+                posts
+        );
     }
 
     private long saveTag(Tag tag) {

@@ -37,6 +37,15 @@ public class Post {
         this.content = content;
     }
 
+    public Post(Long id, String title, String base64Image, String content, Long likes, Long commentsCount) {
+        this.id = id;
+        this.title = title;
+        this.base64Image = base64Image;
+        this.content = content;
+        this.likes = likes;
+        this.commentsCount = commentsCount;
+    }
+
     public Long getId() {
         return id;
     }

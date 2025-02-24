@@ -55,12 +55,12 @@ public class JdbcTemplatePostRepository implements PostRepository {
     }
 
     @Override
-    public long countByTag(String tag) {
+    public int countByTag(String tag) {
         String selectSql = "select count(*) from myblog.posts" + fetchWhereStatementForPaging(tag);
         if (tag != null) {
-            return jdbcTemplate.queryForObject(selectSql, Long.class, tag);
+            return jdbcTemplate.queryForObject(selectSql, Integer.class, tag);
         } else {
-            return jdbcTemplate.queryForObject(selectSql, Long.class);
+            return jdbcTemplate.queryForObject(selectSql, Integer.class);
         }
     }
 
