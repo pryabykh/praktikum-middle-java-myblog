@@ -11,6 +11,8 @@ public interface TagRepository {
 
     List<Tag> findAllByPostId(Long postId);
 
+    List<Tag> findAllByPostIdIn(List<Long> postIds);
+
     Optional<Tag> findById(Long tagId);
 
     Optional<Tag> findByContent(String content);

@@ -157,6 +157,49 @@ public class JdbcTemplateTagRepositoryTest extends AbstractJdbcTemplateRepositor
         assertEquals("tag3", savedTag3.getContent());
     }
 
+    @Test
+    void findAllByPostIdIn_whenTagsExist_ShouldReturnListOfTags() {
+        Long postId1 = insertPost(jdbcTemplate);
+        Long postId2 = insertPost(jdbcTemplate);
+        Long postId3 = insertPost(jdbcTemplate);
+
+        Tag tag1 = new Tag("tag1");
+        Tag tag2 = new Tag("tag2");
+        Tag tag3 = new Tag("tag3");
+        Tag tag4 = new Tag("tag4");
+
+        long tag1Id = tagRepository.save(tag1);
+        long tag2Id = tagRepository.save(tag2);
+        long tag3Id = tagRepository.save(tag3);
+        long tag4Id = tagRepository.save(tag4);
+
+        insertPostTag(postId1, tag1Id, jdbcTemplate);
+        insertPostTag(postId1, tag2Id, jdbcTemplate);
+        insertPostTag(postId2, tag3Id, jdbcTemplate);
+        insertPostTag(postId3, tag4Id, jdbcTemplate);
+
+        List<Tag> tags = tagRepository.findAllByPostIdIn(List.of(postId1, postId2));
+
+        assertNotNull(tags);
+        assertEquals(3, tags.size());
+
+        Tag savedTag1 = tags.get(0);
+        Tag savedTag2 = tags.get(1);
+        Tag savedTag3 = tags.get(2);
+
+        assertNotNull(savedTag1);
+        assertEquals(tag1Id, savedTag1.getId());
+        assertEquals("tag1", savedTag1.getContent());
+
+        assertNotNull(savedTag2);
+        assertEquals(tag2Id, savedTag2.getId());
+        assertEquals("tag2", savedTag2.getContent());
+
+        assertNotNull(savedTag3);
+        assertEquals(tag3Id, savedTag3.getId());
+        assertEquals("tag3", savedTag3.getContent());
+    }
+
     private Tag findTagById(long postId) {
         String query = "select * from myblog.tags where id = ?";
         return jdbcTemplate.queryForObject(query, (resultSet, rowNum) -> {
