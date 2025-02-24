@@ -5,6 +5,7 @@ import com.pryabykh.mapper.BlogMapper;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.PostTag;
 import com.pryabykh.model.Tag;
+import com.pryabykh.repository.CommentRepository;
 import com.pryabykh.repository.PostRepository;
 import com.pryabykh.repository.PostTagRepository;
 import com.pryabykh.repository.TagRepository;
@@ -16,15 +17,18 @@ public class BlogServiceImpl implements BlogService {
     private final BlogMapper blogMapper;
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
+    private final CommentRepository commentRepository;
     private final PostTagRepository postTagRepository;
 
     public BlogServiceImpl(BlogMapper blogMapper,
                            PostRepository postRepository,
                            TagRepository tagRepository,
+                           CommentRepository commentRepository,
                            PostTagRepository postTagRepository) {
         this.blogMapper = blogMapper;
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
+        this.commentRepository = commentRepository;
         this.postTagRepository = postTagRepository;
     }
 
@@ -48,6 +52,20 @@ public class BlogServiceImpl implements BlogService {
             postTagRepository.save(new PostTag(postId, tagId));
         });
         return postId;
+    }
+
+    @Override
+    public PostDto findById(Long postId) {
+        return postRepository.findById(postId)
+                .map(blogMapper::toPostDto)
+                .map(postDto -> {
+                    tagRepository.findAllByPostId(postDto.getId())
+                            .forEach(tag -> postDto.getTags().add(tag.getContent()));
+                    commentRepository.findAllByPostId(postDto.getId())
+                            .forEach(comment -> postDto.getComments().add(blogMapper.toCommentDto(comment)));
+                    return postDto;
+                })
+                .orElseThrow();
     }
 
     private long saveTag(Tag tag) {

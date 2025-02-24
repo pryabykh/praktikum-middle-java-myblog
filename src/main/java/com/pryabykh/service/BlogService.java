@@ -7,4 +7,6 @@ public interface BlogService {
     long create(PostDto dto);
 
     long update(Long postId, PostDto dto);
+
+    PostDto findById(Long postId);
 }

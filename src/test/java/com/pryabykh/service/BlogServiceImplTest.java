@@ -2,8 +2,10 @@ package com.pryabykh.service;
 
 import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapperImpl;
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.Tag;
+import com.pryabykh.repository.CommentRepository;
 import com.pryabykh.repository.PostRepository;
 import com.pryabykh.repository.PostTagRepository;
 import com.pryabykh.repository.TagRepository;
@@ -40,6 +42,9 @@ public class BlogServiceImplTest {
 
     @Autowired
     private PostTagRepository postTagRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @BeforeEach
     void setUp() {
@@ -86,6 +91,40 @@ public class BlogServiceImplTest {
         verify(postTagRepository, times(3)).save(any());
     }
 
+    @Test
+    void findById_WhenPostExists_ShouldReturnPost() {
+        when(postRepository.findById(10L))
+                .thenReturn(Optional.of(new Post(10L, "title", "image", "content")));
+        when(tagRepository.findAllByPostId(10L)).thenReturn(List.of(
+                new Tag(1L, "tag1"),
+                new Tag(2L, "tag2")
+        ));
+        when(commentRepository.findAllByPostId(10L)).thenReturn(List.of(
+                new Comment(1L, "comment1", 10L),
+                new Comment(2L, "comment2", 10L)
+        ));
+
+        PostDto postDto = blogService.findById(10L);
+
+        assertEquals(10L, postDto.getId());
+        assertEquals("title", postDto.getTitle());
+        assertEquals("image", postDto.getBase64Image());
+        assertEquals("content", postDto.getContent());
+
+        assertEquals("tag1", postDto.getTags().get(0));
+        assertEquals("tag2", postDto.getTags().get(1));
+
+        assertEquals(1L, postDto.getComments().get(0).getId());
+        assertEquals("comment1", postDto.getComments().get(0).getContent());
+
+        assertEquals(2L, postDto.getComments().get(1).getId());
+        assertEquals("comment2", postDto.getComments().get(1).getContent());
+
+        verify(postRepository, times(1)).findById(eq(10L));
+        verify(tagRepository, times(1)).findAllByPostId(eq(10L));
+        verify(commentRepository, times(1)).findAllByPostId(eq(10L));
+    }
+
     @Configuration
     static class DaoConfig {
 
@@ -102,6 +141,11 @@ public class BlogServiceImplTest {
         @Bean
         public PostTagRepository postTagRepository() {
             return Mockito.mock(PostTagRepository.class);
+        }
+
+        @Bean
+        public CommentRepository commentRepository() {
+            return Mockito.mock(CommentRepository.class);
         }
     }
 }

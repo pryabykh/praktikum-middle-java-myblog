@@ -1,6 +1,8 @@
 package com.pryabykh.mapper;
 
+import com.pryabykh.dto.CommentDto;
 import com.pryabykh.dto.PostDto;
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.Tag;
 import org.springframework.stereotype.Component;
@@ -17,5 +19,23 @@ public class BlogMapperImpl implements BlogMapper {
             post.getTags().add(new Tag(tag));
         });
         return post;
+    }
+
+    @Override
+    public PostDto toPostDto(Post post) {
+        PostDto postDto = new PostDto();
+        postDto.setId(post.getId());
+        postDto.setTitle(post.getTitle());
+        postDto.setContent(post.getContent());
+        postDto.setBase64Image(post.getBase64Image());
+        return postDto;
+    }
+
+    @Override
+    public CommentDto toCommentDto(Comment comment) {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(comment.getId());
+        commentDto.setContent(comment.getContent());
+        return commentDto;
     }
 }
