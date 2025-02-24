@@ -1,5 +1,7 @@
 package com.pryabykh.model;
 
+import java.util.Objects;
+
 public class Tag {
 
     private Long id;
@@ -32,5 +34,18 @@ public class Tag {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Tag tag = (Tag) o;
+        return Objects.equals(content, tag.content);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(content);
     }
 }
