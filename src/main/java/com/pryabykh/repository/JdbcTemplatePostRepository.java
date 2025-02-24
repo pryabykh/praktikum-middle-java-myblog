@@ -49,6 +49,16 @@ public class JdbcTemplatePostRepository implements PostRepository {
         }
     }
 
+    @Override
+    public long countByTag(String tag) {
+        String selectSql = "select count(*) from myblog.posts" + fetchWhereStatementForPaging(tag);
+        if (tag != null) {
+            return jdbcTemplate.queryForObject(selectSql, Long.class, tag);
+        } else {
+            return jdbcTemplate.queryForObject(selectSql, Long.class);
+        }
+    }
+
     private long insert(Post post) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
@@ -79,5 +89,16 @@ public class JdbcTemplatePostRepository implements PostRepository {
 
         jdbcTemplate.update(updateSql, post.getTitle(), post.getBase64Image(), post.getContent(), post.getId());
         return post.getId();
+    }
+
+    private String fetchWhereStatementForPaging(String tag) {
+        if (tag != null) {
+            return """
+                 where id in
+                (select distinct pt.post_id from myblog.tags t join myblog.posts_tags pt on pt.tag_id = t.id where t.content = ?)
+                """;
+        } else {
+            return "";
+        }
     }
 }

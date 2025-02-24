@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringJUnitConfig(classes = {H2DataSourceConfiguration.class, JdbcTemplatePostRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
-public class JdbcTemplatePostRepositoryTest {
+public class JdbcTemplatePostRepositoryTest extends AbstractJdbcTemplateRepositoryTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -101,6 +101,38 @@ public class JdbcTemplatePostRepositoryTest {
         Optional<Post> optionalPost = postRepository.findById(Long.MAX_VALUE);
 
         assertTrue(optionalPost.isEmpty());
+    }
+
+    @Test
+    void countByTag_whenPostsWithTagsExist_ShouldCountThem() {
+        Long tagId1 = insertTag("tag1", jdbcTemplate);
+        Long tagId2 = insertTag("tag2", jdbcTemplate);
+
+        for (int i = 0; i < 10; i++) {
+            long postId = insertPost(jdbcTemplate);
+
+            insertPostTag(postId, tagId1, jdbcTemplate);
+            insertPostTag(postId, tagId2, jdbcTemplate);
+        }
+
+        Long diffTagId1 = insertTag("differentTag1", jdbcTemplate);
+        Long diffTagId2 = insertTag("differentTag2", jdbcTemplate);
+        for (int i = 0; i < 11; i++) {
+            long postId = insertPost(jdbcTemplate);
+
+
+            insertPostTag(postId, diffTagId1, jdbcTemplate);
+            insertPostTag(postId, diffTagId2, jdbcTemplate);
+        }
+
+        long countTag1 = postRepository.countByTag("tag1");
+        assertEquals(10, countTag1);
+
+        long countDifferentTag1 = postRepository.countByTag("differentTag1");
+        assertEquals(11, countDifferentTag1);
+
+        long countAll = postRepository.countByTag(null);
+        assertEquals(21, countAll);
     }
 
     private Post findPostById(long postId) {

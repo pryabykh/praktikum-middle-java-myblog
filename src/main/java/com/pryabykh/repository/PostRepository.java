@@ -10,4 +10,6 @@ public interface PostRepository {
     long save(Post post);
 
     Optional<Post> findById(Long postId);
+
+    long countByTag(String tag);
 }
