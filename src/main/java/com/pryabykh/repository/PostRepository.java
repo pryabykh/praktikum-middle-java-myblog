@@ -1,7 +1,9 @@
 package com.pryabykh.repository;
 
+import com.pryabykh.dto.Page;
 import com.pryabykh.model.Post;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
@@ -12,4 +14,6 @@ public interface PostRepository {
     Optional<Post> findById(Long postId);
 
     long countByTag(String tag);
+
+    List<Post> findAllByTag(String tag, int pageNumber, int pageSize);
 }

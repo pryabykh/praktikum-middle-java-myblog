@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -133,6 +134,42 @@ public class JdbcTemplatePostRepositoryTest extends AbstractJdbcTemplateReposito
 
         long countAll = postRepository.countByTag(null);
         assertEquals(21, countAll);
+    }
+
+    @Test
+    void findAllByTag_whenPostsWithTagsExist_ShouldReturnPosts() {
+        Long tagId1 = insertTag("tag1", jdbcTemplate);
+        Long tagId2 = insertTag("tag2", jdbcTemplate);
+
+        for (int i = 0; i < 10; i++) {
+            long postId = insertPost(jdbcTemplate);
+
+            insertPostTag(postId, tagId1, jdbcTemplate);
+            insertPostTag(postId, tagId2, jdbcTemplate);
+        }
+
+        Long diffTagId1 = insertTag("differentTag1", jdbcTemplate);
+        Long diffTagId2 = insertTag("differentTag2", jdbcTemplate);
+        for (int i = 0; i < 11; i++) {
+            long postId = insertPost(jdbcTemplate);
+
+
+            insertPostTag(postId, diffTagId1, jdbcTemplate);
+            insertPostTag(postId, diffTagId2, jdbcTemplate);
+        }
+
+        List<Post> posts1ByTaq1 = postRepository.findAllByTag("tag1", 0, 5);
+        assertEquals(5L, posts1ByTaq1.size());
+
+        List<Post> posts2ByTaq1 = postRepository.findAllByTag("tag1", 1, 5);
+        assertEquals(5L, posts2ByTaq1.size());
+
+        List<Post> posts3ByTaq1 = postRepository.findAllByTag("tag1", 2, 5);
+        assertEquals(0L, posts3ByTaq1.size());
+
+
+        List<Post> allPosts = postRepository.findAllByTag(null, 0, 50);
+        assertEquals(21, allPosts.size());
     }
 
     private Post findPostById(long postId) {

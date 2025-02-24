@@ -1,14 +1,18 @@
 package com.pryabykh.repository;
 
+import com.pryabykh.dto.Page;
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Post;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -56,6 +60,29 @@ public class JdbcTemplatePostRepository implements PostRepository {
             return jdbcTemplate.queryForObject(selectSql, Long.class, tag);
         } else {
             return jdbcTemplate.queryForObject(selectSql, Long.class);
+        }
+    }
+
+    @Override
+    public List<Post> findAllByTag(String tag, int pageNumber, int pageSize) {
+        String selectSql = "select * from myblog.posts" +
+                fetchWhereStatementForPaging(tag) +
+                " order by id desc limit ? offset ?";
+
+        RowMapper<Post> rowMapper = (resultSet, rowNum) -> {
+            Post p = new Post();
+            p.setId(resultSet.getLong("id"));
+            p.setTitle(resultSet.getString("title"));
+            p.setBase64Image(resultSet.getString("base_64_image"));
+            p.setContent(resultSet.getString("content"));
+            p.setLikes(resultSet.getLong("likes"));
+            return p;
+        };
+        int offset = pageNumber * pageSize;
+        if (tag != null) {
+            return jdbcTemplate.query(selectSql, rowMapper, tag, pageSize, offset);
+        } else {
+            return jdbcTemplate.query(selectSql, rowMapper, pageSize, offset);
         }
     }
 
