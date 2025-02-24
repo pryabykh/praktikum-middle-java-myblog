@@ -15,6 +15,8 @@ public class Post {
 
     private Long likes;
 
+    private Long commentsCount;
+
     private List<Tag> tags = new ArrayList<>();
 
     private List<Comment> comments = new ArrayList<>();
@@ -73,6 +75,14 @@ public class Post {
 
     public void setLikes(Long likes) {
         this.likes = likes;
+    }
+
+    public Long getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(Long commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public List<Tag> getTags() {

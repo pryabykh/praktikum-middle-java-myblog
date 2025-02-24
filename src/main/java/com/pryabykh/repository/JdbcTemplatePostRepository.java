@@ -35,7 +35,7 @@ public class JdbcTemplatePostRepository implements PostRepository {
     @Override
     public Optional<Post> findById(Long postId) {
         String selectSql = """
-                select * from myblog.posts where id = ?
+                select p.*, (select count(*) from myblog.comments c where c.post_id = p.id) as comments_count from myblog.posts p where p.id = ?
                 """;
         try {
             Post post = jdbcTemplate.queryForObject(selectSql, (resultSet, rowNum) -> {
@@ -45,6 +45,7 @@ public class JdbcTemplatePostRepository implements PostRepository {
                 p.setBase64Image(resultSet.getString("base_64_image"));
                 p.setContent(resultSet.getString("content"));
                 p.setLikes(resultSet.getLong("likes"));
+                p.setCommentsCount(resultSet.getLong("comments_count"));
                 return p;
             }, postId);
             return Optional.ofNullable(post);
@@ -65,9 +66,9 @@ public class JdbcTemplatePostRepository implements PostRepository {
 
     @Override
     public List<Post> findAllByTag(String tag, int pageNumber, int pageSize) {
-        String selectSql = "select * from myblog.posts" +
+        String selectSql = "select p.*, (select count(*) from myblog.comments c where c.post_id = p.id) as comments_count from myblog.posts p" +
                 fetchWhereStatementForPaging(tag) +
-                " order by id desc limit ? offset ?";
+                " order by p.id desc limit ? offset ?";
 
         RowMapper<Post> rowMapper = (resultSet, rowNum) -> {
             Post p = new Post();
@@ -76,6 +77,7 @@ public class JdbcTemplatePostRepository implements PostRepository {
             p.setBase64Image(resultSet.getString("base_64_image"));
             p.setContent(resultSet.getString("content"));
             p.setLikes(resultSet.getLong("likes"));
+            p.setCommentsCount(resultSet.getLong("comments_count"));
             return p;
         };
         int offset = pageNumber * pageSize;

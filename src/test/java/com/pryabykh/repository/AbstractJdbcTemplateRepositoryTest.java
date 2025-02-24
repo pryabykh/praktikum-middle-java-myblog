@@ -1,5 +1,6 @@
 package com.pryabykh.repository;
 
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.PostTag;
 import com.pryabykh.model.Tag;
@@ -65,5 +66,28 @@ public abstract class AbstractJdbcTemplateRepositoryTest {
                 """;
 
         jdbcTemplate.update(insertSql, postTag.getPostId(), postTag.getTagId());
+    }
+
+    protected Long insertComment(Long postId, JdbcTemplate jdbcTemplate) {
+        Comment comment = new Comment("content", postId);
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        String insertSql = """
+                insert into myblog.comments (content, post_id) values (?, ?)
+                """;
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, comment.getContent());
+            ps.setLong(2, comment.getPostId());
+            return ps;
+        }, keyHolder);
+
+        Number id = keyHolder.getKey();
+        if (id != null) {
+            return id.longValue();
+        } else {
+            throw new IllegalArgumentException("Не удалось получить id при создании Comment");
+        }
     }
 }

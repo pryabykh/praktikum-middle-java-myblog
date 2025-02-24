@@ -98,6 +98,23 @@ public class JdbcTemplatePostRepositoryTest extends AbstractJdbcTemplateReposito
     }
 
     @Test
+    void findById_whenPostExistAndHasComments_ShouldReturnPostWithCommentsCount() {
+        Post post = new Post("Название поста", "base64data", "text content");
+        long postId = postRepository.save(post);
+
+        insertComment(postId, jdbcTemplate);
+        insertComment(postId, jdbcTemplate);
+        insertComment(postId, jdbcTemplate);
+
+        Optional<Post> optionalPost = postRepository.findById(postId);
+
+        assertTrue(optionalPost.isPresent());
+        Post savedPost = optionalPost.get();
+        assertEquals(postId, savedPost.getId());
+        assertEquals(3L, savedPost.getCommentsCount());
+    }
+
+    @Test
     void findById_whenPostDoesNotExist_ShouldReturnNull() {
         Optional<Post> optionalPost = postRepository.findById(Long.MAX_VALUE);
 
@@ -170,6 +187,26 @@ public class JdbcTemplatePostRepositoryTest extends AbstractJdbcTemplateReposito
 
         List<Post> allPosts = postRepository.findAllByTag(null, 0, 50);
         assertEquals(21, allPosts.size());
+    }
+
+    @Test
+    void findAllByTag_whenPostsHaveComments_ShouldReturnPostsWithCommentsCount() {
+        Long tagId1 = insertTag("tag1", jdbcTemplate);
+
+        for (int i = 0; i < 10; i++) {
+            long postId = insertPost(jdbcTemplate);
+
+            insertPostTag(postId, tagId1, jdbcTemplate);
+
+            insertComment(postId, jdbcTemplate);
+            insertComment(postId, jdbcTemplate);
+            insertComment(postId, jdbcTemplate);
+        }
+
+        List<Post> allPosts = postRepository.findAllByTag(null, 0, 50);
+        for (Post post : allPosts) {
+            assertEquals(3L, post.getCommentsCount());
+        }
     }
 
     private Post findPostById(long postId) {
