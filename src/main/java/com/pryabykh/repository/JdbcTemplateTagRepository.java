@@ -1,5 +1,6 @@
 package com.pryabykh.repository;
 
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Tag;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -26,6 +28,20 @@ public class JdbcTemplateTagRepository implements TagRepository {
         } else {
             return update(tag);
         }
+    }
+
+    @Override
+    public List<Tag> findAllByPostId(Long postId) {
+        String selectSql = """
+                select * from myblog.tags t join myblog.posts_tags pt on pt.tag_id = t.id where pt.post_id = ? order by id
+                """;
+
+        return jdbcTemplate.query(selectSql, (resultSet, rowNum) -> {
+            Tag t = new Tag();
+            t.setId(resultSet.getLong("id"));
+            t.setContent(resultSet.getString("content"));
+            return t;
+        }, postId);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.pryabykh.repository;
 
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Tag;
 import configuration.H2DataSourceConfiguration;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringJUnitConfig(classes = {H2DataSourceConfiguration.class, JdbcTemplateTagRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
-public class JdbcTemplateTagRepositoryTest {
+public class JdbcTemplateTagRepositoryTest extends AbstractJdbcTemplateRepositoryTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -116,6 +118,43 @@ public class JdbcTemplateTagRepositoryTest {
         Optional<Tag> optionalTag = tagRepository.findByContent("test non existed tag");
 
         assertTrue(optionalTag.isEmpty());
+    }
+
+    @Test
+    void findAllByPostId_whenTagsExist_ShouldReturnListOfTags() {
+        Long postId = insertPost(jdbcTemplate);
+        Tag tag1 = new Tag("tag1");
+        Tag tag2 = new Tag("tag2");
+        Tag tag3 = new Tag("tag3");
+
+        long tag1Id = tagRepository.save(tag1);
+        long tag2Id = tagRepository.save(tag2);
+        long tag3Id = tagRepository.save(tag3);
+
+        insertPostTag(postId, tag1Id, jdbcTemplate);
+        insertPostTag(postId, tag2Id, jdbcTemplate);
+        insertPostTag(postId, tag3Id, jdbcTemplate);
+
+        List<Tag> tags = tagRepository.findAllByPostId(postId);
+
+        assertNotNull(tags);
+        assertEquals(3, tags.size());
+
+        Tag savedTag1 = tags.get(0);
+        Tag savedTag2 = tags.get(1);
+        Tag savedTag3 = tags.get(2);
+
+        assertNotNull(savedTag1);
+        assertEquals(tag1Id, savedTag1.getId());
+        assertEquals("tag1", savedTag1.getContent());
+
+        assertNotNull(savedTag2);
+        assertEquals(tag2Id, savedTag2.getId());
+        assertEquals("tag2", savedTag2.getContent());
+
+        assertNotNull(savedTag3);
+        assertEquals(tag3Id, savedTag3.getId());
+        assertEquals("tag3", savedTag3.getContent());
     }
 
     private Tag findTagById(long postId) {

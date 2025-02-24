@@ -1,6 +1,7 @@
 package com.pryabykh.repository;
 
 import com.pryabykh.model.Post;
+import com.pryabykh.model.PostTag;
 import com.pryabykh.model.Tag;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -55,5 +56,14 @@ public abstract class AbstractJdbcTemplateRepositoryTest {
         } else {
             throw new IllegalArgumentException("Не удалось получить id при создании Tag");
         }
+    }
+
+    protected void insertPostTag(Long postId, Long tagId, JdbcTemplate jdbcTemplate) {
+        PostTag postTag = new PostTag(postId, tagId);
+        String insertSql = """
+                insert into myblog.posts_tags (post_id, tag_id) values (?, ?)
+                """;
+
+        jdbcTemplate.update(insertSql, postTag.getPostId(), postTag.getTagId());
     }
 }
