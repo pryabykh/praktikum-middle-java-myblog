@@ -1,6 +1,6 @@
 package com.pryabykh.service;
 
-import com.pryabykh.dto.CreatePostDto;
+import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapper;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.PostTag;
@@ -29,9 +29,21 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public long create(CreatePostDto dto) {
+    public long create(PostDto dto) {
         Post post = blogMapper.mapToPost(dto);
         long postId = postRepository.save(post);
+        post.getTags().stream().map(this::saveTag).forEach(tagId -> {
+            postTagRepository.save(new PostTag(postId, tagId));
+        });
+        return postId;
+    }
+
+    @Override
+    public long update(Long postId, PostDto dto) {
+        Post post = blogMapper.mapToPost(dto);
+        post.setId(postId);
+        postRepository.save(post);
+        postTagRepository.deleteByPostId(postId);
         post.getTags().stream().map(this::saveTag).forEach(tagId -> {
             postTagRepository.save(new PostTag(postId, tagId));
         });

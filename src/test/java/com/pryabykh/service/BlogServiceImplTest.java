@@ -1,6 +1,6 @@
 package com.pryabykh.service;
 
-import com.pryabykh.dto.CreatePostDto;
+import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapperImpl;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.Tag;
@@ -47,7 +47,7 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void create_WhenValidCreateDtoProvided_ShouldCreatePost() {
+    void create_WhenValidDtoProvided_ShouldCreatePost() {
         when(postRepository.save(any(Post.class))).thenReturn(10L);
         when(tagRepository.save(eq(new Tag("tag1")))).thenReturn(1L);
         when(tagRepository.save(eq(new Tag("tag2")))).thenReturn(2L);
@@ -55,13 +55,34 @@ public class BlogServiceImplTest {
         when(tagRepository.findByContent("tag3")).thenReturn(Optional.of(new Tag(3L, "tag3")));
 
         long postId = blogService.create(
-                new CreatePostDto("title", "image", "content", List.of("tag1", "tag2", "tag3"))
+                new PostDto("title", "image", "content", List.of("tag1", "tag2", "tag3"))
         );
 
         assertEquals(10L, postId);
         verify(postRepository, times(1)).save(any());
         verify(tagRepository, times(3)).save(any());
         verify(tagRepository, times(1)).findByContent("tag3");
+        verify(postTagRepository, times(3)).save(any());
+    }
+
+    @Test
+    void update_WhenValidDtoProvided_ShouldUpdatePost() {
+        when(postRepository.save(any(Post.class))).thenReturn(10L);
+        when(tagRepository.save(eq(new Tag("tag1")))).thenReturn(1L);
+        when(tagRepository.save(eq(new Tag("tag2")))).thenReturn(2L);
+        when(tagRepository.save(eq(new Tag("tag3")))).thenThrow(DuplicateKeyException.class);
+        when(tagRepository.findByContent("tag3")).thenReturn(Optional.of(new Tag(3L, "tag3")));
+
+        long postId = blogService.update(
+                10L,
+                new PostDto("title", "image", "content", List.of("tag1", "tag2", "tag3"))
+        );
+
+        assertEquals(10L, postId);
+        verify(postRepository, times(1)).save(any());
+        verify(tagRepository, times(3)).save(any());
+        verify(tagRepository, times(1)).findByContent("tag3");
+        verify(postTagRepository, times(1)).deleteByPostId(eq(10L));
         verify(postTagRepository, times(3)).save(any());
     }
 

@@ -3,7 +3,7 @@ package com.pryabykh.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CreatePostDto {
+public class PostDto {
 
     private String title;
 
@@ -13,10 +13,10 @@ public class CreatePostDto {
 
     private List<String> tags = new ArrayList<>();
 
-    public CreatePostDto() {
+    public PostDto() {
     }
 
-    public CreatePostDto(String title, String base64Image, String content, List<String> tags) {
+    public PostDto(String title, String base64Image, String content, List<String> tags) {
         this.title = title;
         this.base64Image = base64Image;
         this.content = content;

@@ -1,6 +1,6 @@
 package com.pryabykh.mapper;
 
-import com.pryabykh.dto.CreatePostDto;
+import com.pryabykh.dto.PostDto;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.Tag;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BlogMapperImpl implements BlogMapper {
 
-    public Post mapToPost(CreatePostDto dto) {
+    public Post mapToPost(PostDto dto) {
         Post post = new Post();
         post.setTitle(dto.getTitle());
         post.setBase64Image(dto.getBase64Image());
