@@ -1,6 +1,8 @@
 package com.pryabykh.repository;
 
+import com.pryabykh.model.Post;
 import com.pryabykh.model.Tag;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Optional;
 
 @Repository
 public class JdbcTemplateTagRepository implements TagRepository {
@@ -23,6 +26,24 @@ public class JdbcTemplateTagRepository implements TagRepository {
             return insert(tag);
         } else {
             return update(tag);
+        }
+    }
+
+    @Override
+    public Optional<Tag> findById(Long tagId) {
+        String selectSql = """
+                select * from myblog.tags where id = ?
+                """;
+        try {
+            Tag tag = jdbcTemplate.queryForObject(selectSql, (resultSet, rowNum) -> {
+                Tag t = new Tag();
+                t.setId(resultSet.getLong("id"));
+                t.setContent(resultSet.getString("content"));
+                return t;
+            }, tagId);
+            return Optional.ofNullable(tag);
+        } catch (EmptyResultDataAccessException emptyResultDataAccessException) {
+            return Optional.empty();
         }
     }
 

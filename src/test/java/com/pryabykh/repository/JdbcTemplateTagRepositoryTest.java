@@ -11,9 +11,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringJUnitConfig(classes = {H2DataSourceConfiguration.class, JdbcTemplateTagRepository.class})
 @TestPropertySource(locations = "classpath:test-application.properties")
@@ -75,6 +78,25 @@ public class JdbcTemplateTagRepositoryTest {
         Tag tagWithoutContent = new Tag(null);
 
         assertThrows(DataIntegrityViolationException.class, () -> tagRepository.save(tagWithoutContent));
+    }
+
+    @Test
+    void findById_whenTagExist_ShouldReturnTag() {
+        Tag tag = new Tag("Tag");
+        long tagId = tagRepository.save(tag);
+        Optional<Tag> optionalTag = tagRepository.findById(tagId);
+
+        assertTrue(optionalTag.isPresent());
+        Tag savedTag = optionalTag.get();
+        assertEquals(tagId, savedTag.getId());
+        assertEquals("Tag", savedTag.getContent());
+    }
+
+    @Test
+    void findById_whenTagDoesNotExist_ShouldReturnNull() {
+        Optional<Tag> optionalTag = tagRepository.findById(Long.MAX_VALUE);
+
+        assertTrue(optionalTag.isEmpty());
     }
 
     private Tag findTagById(long postId) {
