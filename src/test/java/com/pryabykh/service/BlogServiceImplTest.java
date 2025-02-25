@@ -54,14 +54,14 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void create_WhenValidDtoProvided_ShouldCreatePost() {
+    void create_WhenValidDtoProvided_ShouldCreatePostPost() {
         when(postRepository.save(any(Post.class))).thenReturn(10L);
         when(tagRepository.save(eq(new Tag("tag1")))).thenReturn(1L);
         when(tagRepository.save(eq(new Tag("tag2")))).thenReturn(2L);
         when(tagRepository.save(eq(new Tag("tag3")))).thenThrow(DuplicateKeyException.class);
         when(tagRepository.findByContent("tag3")).thenReturn(Optional.of(new Tag(3L, "tag3")));
 
-        long postId = blogService.create(
+        long postId = blogService.createPost(
                 new PostDto("title", "image", "content", List.of("tag1", "tag2", "tag3"))
         );
 
@@ -73,14 +73,14 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void update_WhenValidDtoProvided_ShouldUpdatePost() {
+    void update_WhenValidDtoProvided_ShouldUpdatePostPost() {
         when(postRepository.save(any(Post.class))).thenReturn(10L);
         when(tagRepository.save(eq(new Tag("tag1")))).thenReturn(1L);
         when(tagRepository.save(eq(new Tag("tag2")))).thenReturn(2L);
         when(tagRepository.save(eq(new Tag("tag3")))).thenThrow(DuplicateKeyException.class);
         when(tagRepository.findByContent("tag3")).thenReturn(Optional.of(new Tag(3L, "tag3")));
 
-        long postId = blogService.update(
+        long postId = blogService.updatePost(
                 10L,
                 new PostDto("title", "image", "content", List.of("tag1", "tag2", "tag3"))
         );
@@ -102,7 +102,7 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void findById_WhenPostExists_ShouldReturnPost() {
+    void findPostById_WhenPostExists_ShouldReturnPost() {
         when(postRepository.findById(10L))
                 .thenReturn(Optional.of(new Post(10L, "title", "image", "content", 100L, 5L)));
         when(tagRepository.findAllByPostId(10L)).thenReturn(List.of(
@@ -114,7 +114,7 @@ public class BlogServiceImplTest {
                 new Comment(2L, "comment2", 10L)
         ));
 
-        PostDto postDto = blogService.findById(10L);
+        PostDto postDto = blogService.findPostById(10L);
 
         assertEquals(10L, postDto.getId());
         assertEquals("title", postDto.getTitle());
@@ -138,7 +138,7 @@ public class BlogServiceImplTest {
     }
 
     @Test
-    void findAll_WhenPostsExists_ShouldReturnPosts() {
+    void findAll_Posts_WhenPostsExists_ShouldReturnPosts() {
         when(postRepository.findAllByTag(eq("tag1"), eq(0), eq(10))).thenReturn(List.of(
                 new Post(1L, "title1", "image1", "content1", 1L, 1L),
                 new Post(2L, "title2", "image2", "content2", 2L, 2L),
@@ -157,7 +157,7 @@ public class BlogServiceImplTest {
         ));
         when(postRepository.countByTag(eq("tag1"))).thenReturn(5);
 
-        Page page = blogService.findAll("tag1", 0, 10);
+        Page page = blogService.findAllPosts("tag1", 0, 10);
 
         assertNotNull(page);
         assertEquals(1, page.getTotalPages());

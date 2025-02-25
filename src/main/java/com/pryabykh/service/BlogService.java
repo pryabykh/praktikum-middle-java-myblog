@@ -5,13 +5,13 @@ import com.pryabykh.dto.PostDto;
 
 public interface BlogService {
 
-    long create(PostDto dto);
+    long createPost(PostDto dto);
 
-    long update(Long postId, PostDto dto);
+    long updatePost(Long postId, PostDto dto);
 
     void deletePost(Long postId);
 
-    PostDto findById(Long postId);
+    PostDto findPostById(Long postId);
 
-    Page findAll(String tag, int pageNumber, int pageSize);
+    Page findAllPosts(String tag, int pageNumber, int pageSize);
 }

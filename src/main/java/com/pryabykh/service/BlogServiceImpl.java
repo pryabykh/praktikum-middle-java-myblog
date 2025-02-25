@@ -39,7 +39,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public long create(PostDto dto) {
+    public long createPost(PostDto dto) {
         Post post = blogMapper.mapToPost(dto);
         long postId = postRepository.save(post);
         post.getTags().stream().map(this::saveTag).forEach(tagId -> {
@@ -49,7 +49,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public long update(Long postId, PostDto dto) {
+    public long updatePost(Long postId, PostDto dto) {
         Post post = blogMapper.mapToPost(dto);
         post.setId(postId);
         postRepository.save(post);
@@ -68,7 +68,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public PostDto findById(Long postId) {
+    public PostDto findPostById(Long postId) {
         return postRepository.findById(postId)
                 .map(blogMapper::toPostDto)
                 .map(postDto -> {
@@ -82,7 +82,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public Page findAll(String tag, int pageNumber, int pageSize) {
+    public Page findAllPosts(String tag, int pageNumber, int pageSize) {
         List<PostDto> posts = postRepository.findAllByTag(tag, pageNumber, pageSize)
                 .stream()
                 .map(blogMapper::toPostDto)
