@@ -2,6 +2,13 @@ package com.pryabykh.dto;
 
 public class CommentDto {
 
+    public CommentDto() {
+    }
+
+    public CommentDto(String content) {
+        this.content = content;
+    }
+
     private Long id;
 
     private String content;

@@ -1,5 +1,6 @@
 package com.pryabykh.service;
 
+import com.pryabykh.dto.CommentDto;
 import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 
@@ -14,4 +15,6 @@ public interface BlogService {
     PostDto findPostById(Long postId);
 
     Page findAllPosts(String tag, int pageNumber, int pageSize);
+
+    long addComment(long postId, CommentDto dto);
 }

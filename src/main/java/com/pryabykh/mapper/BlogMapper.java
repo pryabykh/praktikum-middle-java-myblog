@@ -11,5 +11,7 @@ public interface BlogMapper {
 
     PostDto toPostDto(Post post);
 
+    Comment mapToComment(CommentDto dto);
+
     CommentDto toCommentDto(Comment comment);
 }

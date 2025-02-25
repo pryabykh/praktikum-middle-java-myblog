@@ -1,5 +1,6 @@
 package com.pryabykh.service;
 
+import com.pryabykh.dto.CommentDto;
 import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapperImpl;
@@ -215,6 +216,16 @@ public class BlogServiceImplTest {
         verify(postRepository, times(1)).findAllByTag(eq("tag1"), eq(0), eq(10));
         verify(tagRepository, times(1)).findAllByPostIdIn(eq(List.of(1L, 2L, 3L, 4L, 5L)));
         verify(postRepository, times(1)).countByTag(eq("tag1"));
+    }
+
+    @Test
+    void addComment_WhenValidCommentProvided_ShouldCreateComment() {
+        when(commentRepository.save(any(Comment.class))).thenReturn(10L);
+
+        long commentId = blogService.addComment(10L, new CommentDto("comment"));
+
+        assertEquals(10L, commentId);
+        verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
     @Configuration

@@ -35,6 +35,13 @@ public class BlogMapperImpl implements BlogMapper {
     }
 
     @Override
+    public Comment mapToComment(CommentDto dto) {
+        Comment comment = new Comment();
+        comment.setContent(dto.getContent());
+        return comment;
+    }
+
+    @Override
     public CommentDto toCommentDto(Comment comment) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(comment.getId());

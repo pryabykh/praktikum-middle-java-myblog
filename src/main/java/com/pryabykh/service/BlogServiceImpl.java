@@ -1,8 +1,10 @@
 package com.pryabykh.service;
 
+import com.pryabykh.dto.CommentDto;
 import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 import com.pryabykh.mapper.BlogMapper;
+import com.pryabykh.model.Comment;
 import com.pryabykh.model.Post;
 import com.pryabykh.model.PostTag;
 import com.pryabykh.model.Tag;
@@ -16,7 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class BlogServiceImpl implements BlogService {
@@ -98,6 +99,13 @@ public class BlogServiceImpl implements BlogService {
                 pageSize,
                 posts
         );
+    }
+
+    @Override
+    public long addComment(long postId, CommentDto dto) {
+        Comment comment = blogMapper.mapToComment(dto);
+        comment.setPostId(postId);
+        return commentRepository.save(comment);
     }
 
     private long saveTag(Tag tag) {
