@@ -108,6 +108,13 @@ public class BlogServiceImpl implements BlogService {
         return commentRepository.save(comment);
     }
 
+    @Override
+    public long updateComment(long commentId, CommentDto dto) {
+        Comment comment = blogMapper.mapToComment(dto);
+        comment.setId(commentId);
+        return commentRepository.save(comment);
+    }
+
     private long saveTag(Tag tag) {
         try {
             return tagRepository.save(tag);

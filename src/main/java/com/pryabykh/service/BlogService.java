@@ -17,4 +17,6 @@ public interface BlogService {
     Page findAllPosts(String tag, int pageNumber, int pageSize);
 
     long addComment(long postId, CommentDto dto);
+
+    long updateComment(long commentId, CommentDto dto);
 }

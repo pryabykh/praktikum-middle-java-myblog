@@ -228,6 +228,16 @@ public class BlogServiceImplTest {
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
+    @Test
+    void updateComment_WhenValidCommentProvided_ShouldUpdateComment() {
+        when(commentRepository.save(any(Comment.class))).thenReturn(10L);
+
+        long commentId = blogService.updateComment(10L, new CommentDto("comment"));
+
+        assertEquals(10L, commentId);
+        verify(commentRepository, times(1)).save(any(Comment.class));
+    }
+
     @Configuration
     static class DaoConfig {
 
