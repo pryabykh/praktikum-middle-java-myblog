@@ -93,6 +93,11 @@ public class JdbcTemplatePostRepository implements PostRepository {
         jdbcTemplate.update("delete from myblog.posts where id = ?", id);
     }
 
+    @Override
+    public void incrementLikes(Long postId) {
+        jdbcTemplate.update("update myblog.posts set likes = likes + 1 where id = ?", postId);
+    }
+
     private long insert(Post post) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 

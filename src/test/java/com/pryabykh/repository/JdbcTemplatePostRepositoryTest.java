@@ -217,6 +217,24 @@ public class JdbcTemplatePostRepositoryTest extends AbstractJdbcTemplateReposito
         assertThrows(EmptyResultDataAccessException.class, () -> findPostById(postId));
     }
 
+    @Test
+    void incrementLikes_whenPostExists_ShouldIncrementLikes() {
+        Long postId = insertPost(jdbcTemplate);
+        postRepository.incrementLikes(postId);
+
+        assertEquals(1L, findPostById(postId).getLikes());
+
+        postRepository.incrementLikes(postId);
+
+        assertEquals(2L, findPostById(postId).getLikes());
+
+        postRepository.incrementLikes(postId);
+        postRepository.incrementLikes(postId);
+        postRepository.incrementLikes(postId);
+
+        assertEquals(5L, findPostById(postId).getLikes());
+    }
+
     private Post findPostById(long postId) {
         String query = "select * from myblog.posts where id = ?";
         return jdbcTemplate.queryForObject(query, (resultSet, rowNum) -> {

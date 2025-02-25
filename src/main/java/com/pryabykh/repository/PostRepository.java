@@ -18,4 +18,6 @@ public interface PostRepository {
     List<Post> findAllByTag(String tag, int pageNumber, int pageSize);
 
     void deleteById(Long id);
+
+    void incrementLikes(Long postId);
 }
