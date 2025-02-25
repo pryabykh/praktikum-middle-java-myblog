@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -207,6 +208,13 @@ public class JdbcTemplatePostRepositoryTest extends AbstractJdbcTemplateReposito
         for (Post post : allPosts) {
             assertEquals(3L, post.getCommentsCount());
         }
+    }
+
+    @Test
+    void deleteById_whenPostExist_ShouldBeDeleted() {
+        Long postId = insertPost(jdbcTemplate);
+        postRepository.deleteById(postId);
+        assertThrows(EmptyResultDataAccessException.class, () -> findPostById(postId));
     }
 
     private Post findPostById(long postId) {

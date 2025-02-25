@@ -16,4 +16,6 @@ public interface PostRepository {
     int countByTag(String tag);
 
     List<Post> findAllByTag(String tag, int pageNumber, int pageSize);
+
+    void deleteById(Long id);
 }

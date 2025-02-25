@@ -88,6 +88,11 @@ public class JdbcTemplatePostRepository implements PostRepository {
         }
     }
 
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update("delete from myblog.posts where id = ?", id);
+    }
+
     private long insert(Post post) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
