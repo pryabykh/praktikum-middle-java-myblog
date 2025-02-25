@@ -92,7 +92,9 @@ public class BlogServiceImpl implements BlogService {
                 .stream()
                 .collect(Collectors.groupingBy(Tag::getPostId));
         posts.forEach(post -> {
-            post.setTags(tagsByPostId.get(post.getId()).stream().map(Tag::getContent).toList());
+            if (tagsByPostId.get(post.getId()) != null) {
+                post.setTags(tagsByPostId.get(post.getId()).stream().map(Tag::getContent).toList());
+            }
         });
         return new Page(
                 postRepository.countByTag(tag),
