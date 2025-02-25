@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -109,6 +110,26 @@ public class JdbcTemplateCommentRepositoryTest extends AbstractJdbcTemplateRepos
         assertEquals(commentId3, savedComment3.getId());
         assertEquals("Comment content3", savedComment3.getContent());
         assertEquals(postId, savedComment3.getPostId());
+    }
+
+    @Test
+    void deleteById_whenCommentExist_ShouldBeDeleted() {
+        Long postId = insertPost(jdbcTemplate);
+        Long commentId = insertComment(postId, jdbcTemplate);
+        commentRepository.deleteById(commentId);
+        assertThrows(EmptyResultDataAccessException.class, () -> findCommentById(postId));
+    }
+
+    @Test
+    void deleteByPostId_whenCommentExist_ShouldBeDeleted() {
+        Long postId = insertPost(jdbcTemplate);
+        insertComment(postId, jdbcTemplate);
+        insertComment(postId, jdbcTemplate);
+        insertComment(postId, jdbcTemplate);
+        commentRepository.deleteByPostId(postId);
+
+        List<Comment> commentsByPostId = commentRepository.findAllByPostId(postId);
+        assertEquals(0, commentsByPostId.size());
     }
 
     private Comment findCommentById(long postId) {

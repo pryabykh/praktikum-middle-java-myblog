@@ -42,6 +42,16 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
         }, postId);
     }
 
+    @Override
+    public void deleteById(Long id) {
+        jdbcTemplate.update("delete from myblog.comments where id = ?", id);
+    }
+
+    @Override
+    public void deleteByPostId(Long postId) {
+        jdbcTemplate.update("delete from myblog.comments where post_id = ?", postId);
+    }
+
     private long insert(Comment comment) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
