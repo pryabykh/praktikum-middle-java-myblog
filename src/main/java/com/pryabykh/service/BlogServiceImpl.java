@@ -102,6 +102,11 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public void likePost(long postId) {
+        postRepository.incrementLikes(postId);
+    }
+
+    @Override
     public long addComment(long postId, CommentDto dto) {
         Comment comment = blogMapper.mapToComment(dto);
         comment.setPostId(postId);

@@ -219,6 +219,12 @@ public class BlogServiceImplTest {
     }
 
     @Test
+    void likePost_whenCalled_ShouldAddLike() {
+        blogService.likePost(10L);
+        verify(postRepository, times(1)).incrementLikes(eq(10L));
+    }
+
+    @Test
     void addComment_WhenValidCommentProvided_ShouldCreateComment() {
         when(commentRepository.save(any(Comment.class))).thenReturn(10L);
 
