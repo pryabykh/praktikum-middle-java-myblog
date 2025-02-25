@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -130,8 +131,82 @@ public class BlogServiceImplTest {
 
     @Test
     void findAll_WhenPostsExists_ShouldReturnPosts() {
-        Page test = blogService.findAll("test", 0, 10);
-        //todo: crete test
+        when(postRepository.findAllByTag(eq("tag1"), eq(0), eq(10))).thenReturn(List.of(
+                new Post(1L, "title1", "image1", "content1", 1L, 1L),
+                new Post(2L, "title2", "image2", "content2", 2L, 2L),
+                new Post(3L, "title3", "image3", "content3", 3L, 3L),
+                new Post(4L, "title4", "image4", "content4", 4L, 4L),
+                new Post(5L, "title5", "image5", "content5", 5L, 5L)
+        ));
+        when(tagRepository.findAllByPostIdIn(eq(List.of(1L, 2L, 3L, 4L, 5L)))).thenReturn(List.of(
+                new Tag(1L, "tag1", 1L),
+                new Tag(2L, "tag2", 1L),
+                new Tag(1L, "tag1", 2L),
+                new Tag(1L, "tag1", 3L),
+                new Tag(1L, "tag1", 4L),
+                new Tag(1L, "tag1", 5L),
+                new Tag(3L, "tag3", 5L)
+        ));
+        when(postRepository.countByTag(eq("tag1"))).thenReturn(5);
+
+        Page page = blogService.findAll("tag1", 0, 10);
+
+        assertNotNull(page);
+        assertEquals(1, page.getTotalPages());
+        assertEquals(5, page.getTotalElements());
+        assertNotNull(page.getContent());
+        assertEquals(5, page.getContent().size());
+
+        List<PostDto> posts = page.getContent();
+
+        assertEquals(1L, posts.get(0).getId());
+        assertEquals("title1", posts.get(0).getTitle());
+        assertEquals("image1", posts.get(0).getBase64Image());
+        assertEquals("content1", posts.get(0).getContent());
+        assertEquals(1L, posts.get(0).getLikes());
+        assertEquals(1L, posts.get(0).getCommentsCount());
+        assertEquals(2, posts.get(0).getTags().size());
+        assertEquals(List.of("tag1", "tag2"), posts.get(0).getTags());
+
+        assertEquals(2L, posts.get(1).getId());
+        assertEquals("title2", posts.get(1).getTitle());
+        assertEquals("image2", posts.get(1).getBase64Image());
+        assertEquals("content2", posts.get(1).getContent());
+        assertEquals(2L, posts.get(1).getLikes());
+        assertEquals(2L, posts.get(1).getCommentsCount());
+        assertEquals(1, posts.get(1).getTags().size());
+        assertEquals(List.of("tag1"), posts.get(1).getTags());
+
+        assertEquals(3L, posts.get(2).getId());
+        assertEquals("title3", posts.get(2).getTitle());
+        assertEquals("image3", posts.get(2).getBase64Image());
+        assertEquals("content3", posts.get(2).getContent());
+        assertEquals(3L, posts.get(2).getLikes());
+        assertEquals(3L, posts.get(2).getCommentsCount());
+        assertEquals(1, posts.get(2).getTags().size());
+        assertEquals(List.of("tag1"), posts.get(2).getTags());
+
+        assertEquals(4L, posts.get(3).getId());
+        assertEquals("title4", posts.get(3).getTitle());
+        assertEquals("image4", posts.get(3).getBase64Image());
+        assertEquals("content4", posts.get(3).getContent());
+        assertEquals(4L, posts.get(3).getLikes());
+        assertEquals(4L, posts.get(3).getCommentsCount());
+        assertEquals(1, posts.get(3).getTags().size());
+        assertEquals(List.of("tag1"), posts.get(3).getTags());
+
+        assertEquals(5L, posts.get(4).getId());
+        assertEquals("title5", posts.get(4).getTitle());
+        assertEquals("image5", posts.get(4).getBase64Image());
+        assertEquals("content5", posts.get(4).getContent());
+        assertEquals(5L, posts.get(4).getLikes());
+        assertEquals(5L, posts.get(4).getCommentsCount());
+        assertEquals(2, posts.get(4).getTags().size());
+        assertEquals(List.of("tag1", "tag3"), posts.get(4).getTags());
+
+        verify(postRepository, times(1)).findAllByTag(eq("tag1"), eq(0), eq(10));
+        verify(tagRepository, times(1)).findAllByPostIdIn(eq(List.of(1L, 2L, 3L, 4L, 5L)));
+        verify(postRepository, times(1)).countByTag(eq("tag1"));
     }
 
     @Configuration

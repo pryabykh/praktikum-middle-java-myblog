@@ -4,19 +4,37 @@ import java.util.List;
 
 public class Page {
 
-    private int totalPages;
+    private final int totalPages;
 
-    private int totalElements;
+    private final int totalElements;
 
-    private List<PostDto> content;
+    private final List<PostDto> content;
+
+    public int getTotalPages() {
+        return totalPages;
+    }
+
+    public int getTotalElements() {
+        return totalElements;
+    }
+
+    public List<PostDto> getContent() {
+        return content;
+    }
 
     public Page(int totalElements, int pageSize, List<PostDto> content) {
-        if (totalElements == 0) {
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("Размер страницы должен быть больше 0");
+        }
+        if (totalElements <= 0) {
             this.totalPages = 0;
         } else {
-            this.totalPages = totalElements / pageSize;
+            int tp = totalElements / pageSize;
+            if (totalElements % pageSize != 0) {
+                tp++;
+            }
+            this.totalPages = tp;
         }
-        this.totalPages = totalPages;
         this.totalElements = totalElements;
         this.content = content;
     }

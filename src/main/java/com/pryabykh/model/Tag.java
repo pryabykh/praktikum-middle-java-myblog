@@ -22,6 +22,12 @@ public class Tag {
         this.content = content;
     }
 
+    public Tag(Long id, String content, Long postId) {
+        this.id = id;
+        this.content = content;
+        this.postId = postId;
+    }
+
     public Long getId() {
         return id;
     }
