@@ -87,6 +87,7 @@ public class BlogServiceImpl implements BlogService {
         List<PostDto> posts = postRepository.findAllByTag(tag, pageNumber, pageSize)
                 .stream()
                 .map(blogMapper::toPostDto)
+                .peek(postDto -> postDto.setContent(cutContent(postDto.getContent())))
                 .toList();
         Map<Long, List<Tag>> tagsByPostId = tagRepository.findAllByPostIdIn(posts.stream().map(PostDto::getId).toList())
                 .stream()
@@ -132,6 +133,15 @@ public class BlogServiceImpl implements BlogService {
             return tagRepository.save(tag);
         } catch (DuplicateKeyException duplicateKeyException) {
             return tagRepository.findByContent(tag.getContent()).map(Tag::getId).orElseThrow();
+        }
+    }
+
+    private String cutContent(String content) {
+        int charactersSize = 300;
+        if (content.length() > charactersSize) {
+            return content.substring(0, charactersSize) + "...";
+        } else {
+            return content;
         }
     }
 }

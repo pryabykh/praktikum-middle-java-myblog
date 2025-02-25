@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf Template</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Light background color */
+        }
+        .main-container {
+            padding: 20px;
+            background-color: #ffffff; /* White background for the container */
+            border: 1px solid #ddd; /* Optional border */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            text-align: left; /* Center-align content inside the div */
+            width: 80%; /* Adjust width as needed */
+            max-width: 600px; /* Maximum width for larger screens */
+        }
+        .post-item {
+            border-bottom: 1px solid #ddd;
+        }
+        .metainfo {
+            background-color: #a87171;
+            color: white;
+            margin-top: 5px;
+        }
+        .tag {
+            background-color: #a87171;
+            color: white;
+            border-right: #f4f4f4;
+        }
+        .tag-container {
+            margin-top: 2px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+        .pagination a:hover {
+            background-color: #e0e0e0;
+        }
+        .pagination .active {
+            background-color: #a87171;
+            color: white;
+            border-color: #a87171;
+            pointer-events: none; /* Disable clicking on active page */
+        }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="post-item" th:each="post : ${posts}">
+        <h1 th:text="${post.title}"></h1>
+        <div th:if="${post.base64Image}">
+            <img th:src="'data:image/jpeg;base64,' + ${post.base64Image}">
+        </div>
+        <div th:text="${post.content}"></div>
+        <div class="metainfo" th:text="'Комментарии: ' + ${post.commentsCount} + ', Лайки: ' + ${post.likes}"></div>
+        <div class="tag-container">
+            <span class="tag" th:each="tag : ${post.tags}" th:text="${tag} + '  '" />
+        </div>
+    </div>
+
+    <!-- Pagination container -->
+    <div class="pagination">
+        <!-- Previous button -->
+        <a th:href="~{} + '?page=' + ${currentPage - 1}"
+           th:if="${currentPage > 1}"
+           th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
+
+        <!-- Page numbers -->
+        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <a th:href="~{} + '?page=' + ${i}"
+               th:text="${i}"
+               th:class="${i == currentPage} ? 'active' : ''" />
+        </th:block>
+
+        <!-- Next button -->
+        <a th:href="~{} + '?page=' + ${currentPage + 1}"
+           th:if="${currentPage < totalPages}"
+           th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
+        <span th:text="'Всего: ' + ${totalElements}" />
+    </div>
+    <div>Отображать на странице: todo</div>
+
+</div>
+</body>
+</html>
