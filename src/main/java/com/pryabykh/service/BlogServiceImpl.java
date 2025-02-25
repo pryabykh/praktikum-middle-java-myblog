@@ -115,6 +115,11 @@ public class BlogServiceImpl implements BlogService {
         return commentRepository.save(comment);
     }
 
+    @Override
+    public void deleteComment(Long commentId) {
+        commentRepository.deleteById(commentId);
+    }
+
     private long saveTag(Tag tag) {
         try {
             return tagRepository.save(tag);

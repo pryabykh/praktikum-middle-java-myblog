@@ -19,4 +19,6 @@ public interface BlogService {
     long addComment(long postId, CommentDto dto);
 
     long updateComment(long commentId, CommentDto dto);
+
+    void deleteComment(Long commentId);
 }

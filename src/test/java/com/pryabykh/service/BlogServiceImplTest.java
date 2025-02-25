@@ -238,6 +238,12 @@ public class BlogServiceImplTest {
         verify(commentRepository, times(1)).save(any(Comment.class));
     }
 
+    @Test
+    void deleteComment_WhenCommentExists_ShouldBeDeleted() {
+        blogService.deleteComment(10L);
+        verify(commentRepository, times(1)).deleteById(eq(10L));
+    }
+
     @Configuration
     static class DaoConfig {
 
