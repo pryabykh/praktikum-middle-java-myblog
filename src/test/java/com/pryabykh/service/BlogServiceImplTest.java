@@ -51,7 +51,7 @@ public class BlogServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        Mockito.reset(postRepository, tagRepository, postTagRepository);
+        Mockito.reset(postRepository, tagRepository, postTagRepository, commentRepository);
     }
 
     @Test
