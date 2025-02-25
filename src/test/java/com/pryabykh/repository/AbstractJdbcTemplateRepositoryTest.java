@@ -22,7 +22,7 @@ public abstract class AbstractJdbcTemplateRepositoryTest {
                 """;
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(insertSql, new String [] {"id"});
             ps.setString(1, post.getTitle());
             ps.setString(2, post.getBase64Image());
             ps.setString(3, post.getContent());
@@ -46,7 +46,7 @@ public abstract class AbstractJdbcTemplateRepositoryTest {
                 """;
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(insertSql, new String [] {"id"});
             ps.setString(1, tag.getContent());
             return ps;
         }, keyHolder);
@@ -77,7 +77,7 @@ public abstract class AbstractJdbcTemplateRepositoryTest {
                 """;
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(insertSql, new String [] {"id"});
             ps.setString(1, comment.getContent());
             ps.setLong(2, comment.getPostId());
             return ps;

@@ -7,7 +7,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -60,7 +59,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository {
                 """;
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(insertSql, new String [] {"id"});
             ps.setString(1, comment.getContent());
             ps.setLong(2, comment.getPostId());
             return ps;

@@ -1,7 +1,5 @@
 package com.pryabykh.repository;
 
-import com.pryabykh.dto.Page;
-import com.pryabykh.model.Comment;
 import com.pryabykh.model.Post;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,7 +9,6 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,7 +103,7 @@ public class JdbcTemplatePostRepository implements PostRepository {
                 """;
 
         jdbcTemplate.update(connection -> {
-            PreparedStatement ps = connection.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement ps = connection.prepareStatement(insertSql, new String [] {"id"});
             ps.setString(1, post.getTitle());
             ps.setString(2, post.getBase64Image());
             ps.setString(3, post.getContent());
