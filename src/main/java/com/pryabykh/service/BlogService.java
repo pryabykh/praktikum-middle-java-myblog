@@ -9,6 +9,8 @@ public interface BlogService {
 
     long update(Long postId, PostDto dto);
 
+    void deletePost(Long postId);
+
     PostDto findById(Long postId);
 
     Page findAll(String tag, int pageNumber, int pageSize);

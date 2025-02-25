@@ -94,6 +94,14 @@ public class BlogServiceImplTest {
     }
 
     @Test
+    void delete_WhenPostExists_ShoudDeletePostPostWithAssotiations() {
+        blogService.deletePost(1L);
+        verify(postTagRepository, times(1)).deleteByPostId(eq(1L));
+        verify(commentRepository, times(1)).deleteByPostId(eq(1L));
+        verify(postRepository, times(1)).deleteById(eq(1L));
+    }
+
+    @Test
     void findById_WhenPostExists_ShouldReturnPost() {
         when(postRepository.findById(10L))
                 .thenReturn(Optional.of(new Post(10L, "title", "image", "content", 100L, 5L)));

@@ -61,6 +61,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public void deletePost(Long postId) {
+        commentRepository.deleteByPostId(postId);
+        postTagRepository.deleteByPostId(postId);
+        postRepository.deleteById(postId);
+    }
+
+    @Override
     public PostDto findById(Long postId) {
         return postRepository.findById(postId)
                 .map(blogMapper::toPostDto)
