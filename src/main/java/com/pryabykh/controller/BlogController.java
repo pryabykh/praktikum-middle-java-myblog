@@ -41,32 +41,38 @@ public class BlogController {
     }
 
     @PostMapping("/create-post")
-    public String create(@ModelAttribute PostDto postDto) {
+    public String createPost(@ModelAttribute PostDto postDto) {
         blogService.createPost(postDto);
         return "redirect:/"; // Redirect to the feed page
     }
 
     @PostMapping("/update-post/{id}")
-    public String create(@PathVariable("id") Long id,
-                         @ModelAttribute PostDto postDto) {
+    public String updatatePost(@PathVariable("id") Long id,
+                               @ModelAttribute PostDto postDto) {
         blogService.updatePost(id, postDto);
-        return "redirect:/post/" + id; // Redirect to the feed page
+        return "redirect:/post/" + id;
+    }
+
+    @GetMapping("/delete-post/{id}")
+    public String deletePost(@PathVariable("id") Long id) {
+        blogService.deletePost(id);
+        return "redirect:/"; // Redirect to the feed page
     }
 
     @GetMapping("/create-post-form")
-    public String createPost() {
+    public String showCreatePostForm() {
         return "create-post";
     }
 
     @GetMapping("/update-post-form/{id}")
-    public String updatePost(@PathVariable("id") Long id, Model model) {
+    public String showUpdatePostForm(@PathVariable("id") Long id, Model model) {
         PostDto post = blogService.findPostById(id);
         model.addAttribute("post", post);
         return "update-post";
     }
 
     @GetMapping("/post/{id}")
-    public String createPost(@PathVariable("id") Long id, Model model) {
+    public String showPost(@PathVariable("id") Long id, Model model) {
         PostDto post = blogService.findPostById(id);
         model.addAttribute("post", post);
         return "post";

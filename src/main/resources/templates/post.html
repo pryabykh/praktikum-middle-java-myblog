@@ -56,6 +56,10 @@
         <a th:href="@{/update-post-form/} + ${post.id}">Изменить пост</a>
     </div>
 
+    <div>
+        <a th:href="@{/delete-post/} + ${post.id}">Удалить пост</a>
+    </div>
+
     <!-- Like Button -->
     <div>
         <button onclick="likePost()">Like</button>
