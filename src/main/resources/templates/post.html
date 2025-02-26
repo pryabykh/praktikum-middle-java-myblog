@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">Post Title</title>
+    <style>
+        .post {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .post img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .tags span {
+            margin-right: 5px;
+            padding: 3px 8px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+        }
+        .comment-edit textarea {
+            display: none;
+        }
+        .comment-edit.active textarea {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<div class="post">
+    <!-- Post Title -->
+    <h1 th:text="${post.title}">Post Title</h1>
+
+    <!-- Post Image -->
+    <div th:if="${post.base64Image}">
+        <img th:src="'data:image/jpeg;base64,' + ${post.base64Image}">
+    </div>
+
+    <!-- Post Text (Split into Paragraphs) -->
+    <div th:utext="${#strings.replace(post.content, '\n', '</p><p>')}" />
+
+    <!-- Post Tags -->
+    <div class="tags">
+        <span th:each="tag : ${post.tags}" th:text="${tag}"></span>
+    </div>
+
+    <!-- Post Actions -->
+    <div>
+        <button>Edit Post</button>
+        <button>Delete Post</button>
+    </div>
+
+    <!-- Like Button -->
+    <div>
+        <button onclick="likePost()">Like</button>
+        <span th:text="'Likes: ' + ${post.likes}">Likes: 0</span>
+    </div>
+
+    <!-- Add Comment Button -->
+    <button onclick="toggleCommentForm()">Add Comment</button>
+
+    <!-- Comment Form -->
+    <form id="commentForm" style="display: none;" onsubmit="return submitComment(event)">
+        <textarea id="newCommentText" placeholder="Write your comment..."></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- List of Comments -->
+    <div>
+        <h3>Comments</h3>
+        <div th:each="comment, iterStat : ${post.comments}">
+            <div class="comment">
+                <!-- Comment Text -->
+                <p th:id="'comment-' + ${iterStat.index}" th:text="${comment.text}"></p>
+
+                <!-- Edit Comment Form -->
+                <div class="comment-edit" th:id="'edit-comment-' + ${iterStat.index}">
+                    <textarea th:value="${comment.text}" style="display: none;"></textarea>
+                    <button onclick="saveComment(this)">Save</button>
+                    <button onclick="cancelEditComment(this)">Cancel</button>
+                </div>
+
+                <!-- Comment Actions -->
+                <div>
+                    <button onclick="editComment(this)">Edit</button>
+                    <button onclick="deleteComment(this)">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Like Button Functionality
+    function likePost() {
+
+    }
+
+    // Toggle Comment Form
+    function toggleCommentForm() {
+        const form = document.getElementById('commentForm');
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
+
+    // Submit Comment
+    function submitComment(event) {
+        event.preventDefault();
+        const commentText = document.getElementById('newCommentText').value.trim();
+        if (commentText) {
+            // Simulate adding the comment to the DOM
+            const commentsSection = document.querySelector('div > h3 + div');
+            const newComment = document.createElement('div');
+            newComment.className = 'comment';
+            newComment.innerHTML = `
+                    <p>${commentText}</p>
+                    <div>
+                        <button onclick="editComment(this)">Edit</button>
+                        <button onclick="deleteComment(this)">Delete</button>
+                    </div>
+                `;
+            commentsSection.appendChild(newComment);
+            document.getElementById('newCommentText').value = '';
+            toggleCommentForm();
+        }
+    }
+
+    // Edit Comment
+    function editComment(button) {
+        const commentDiv = button.closest('.comment');
+        const commentText = commentDiv.querySelector('p').textContent;
+        const editDiv = commentDiv.querySelector('.comment-edit');
+        editDiv.querySelector('textarea').value = commentText;
+        editDiv.classList.add('active');
+    }
+
+    // Save Edited Comment
+    function saveComment(button) {
+        const editDiv = button.closest('.comment-edit');
+        const commentDiv = editDiv.parentElement;
+        const newText = editDiv.querySelector('textarea').value.trim();
+        if (newText) {
+            commentDiv.querySelector('p').textContent = newText;
+        }
+        editDiv.classList.remove('active');
+    }
+
+    // Cancel Edit Comment
+    function cancelEditComment(button) {
+        button.closest('.comment-edit').classList.remove('active');
+    }
+
+    // Delete Comment
+    function deleteComment(button) {
+        const commentDiv = button.closest('.comment');
+        commentDiv.remove();
+    }
+</script>
+</body>
+</html>
