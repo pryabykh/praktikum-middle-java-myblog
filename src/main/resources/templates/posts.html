@@ -68,6 +68,7 @@
 </head>
 <body>
 <div class="main-container">
+    <a th:href="@{/create-post-form}">Добавить пост</a>
     <form th:action="~{}" method="get">
         <label for="tag">Поиск по тегу:</label>
         <input type="text" id="tag" name="tag" placeholder="Ввести тег" />

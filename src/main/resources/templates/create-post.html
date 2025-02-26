@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thymeleaf Template</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Light background color */
+        }
+        .main-container {
+            padding: 20px;
+            background-color: #ffffff; /* White background for the container */
+            border: 1px solid #ddd; /* Optional border */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            text-align: left; /* Center-align content inside the div */
+            width: 80%; /* Adjust width as needed */
+            max-width: 600px; /* Maximum width for larger screens */
+        }
+    </style>
+</head>
+<script>
+    function convertImageToBase64(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                let base64Result = e.target.result;
+                document.getElementById("base64Image").value = base64Result.split(',')[1];
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+<body>
+<div class="main-container">
+    <div class="form-container" id="userForm">
+        <h2>Добавить пост</h2>
+        <form th:action="@{/create-post}" method="POST">
+            <br><br><br>
+            <label for="title">Заголовок:</label>
+            <input type="text" id="title" name="title" required>
+
+            <br><br><br>
+            <label for="base64image">Картинка:</label>
+            <input type="file" id="image" name="image" accept="image/*" onchange="convertImageToBase64(event)" required />
+            <input type="text" id="base64Image" name="base64Image" hidden/>
+            <br><br><br>
+            <label for="content">Текст:</label>
+            <textarea id="content" name="content" rows="5" required></textarea>
+
+            <br><br><br>
+            <label for="tags">Теги через запятую: </label>
+            <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3" required />
+            <br><br><br>
+            <button type="submit">Добавить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

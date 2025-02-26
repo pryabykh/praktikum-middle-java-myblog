@@ -1,12 +1,18 @@
 package com.pryabykh.controller;
 
 import com.pryabykh.dto.Page;
+import com.pryabykh.dto.PostDto;
 import com.pryabykh.service.BlogService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/")
@@ -31,5 +37,16 @@ public class BlogController {
         model.addAttribute("tag", tag);
 
         return "posts";
+    }
+
+    @PostMapping("/create-post")
+    public String save(@ModelAttribute PostDto postDto) {
+        blogService.createPost(postDto);
+        return "redirect:/"; // Redirect to the feed page
+    }
+
+    @GetMapping("/create-post-form")
+    public String createPost() {
+        return "create-post";
     }
 }
