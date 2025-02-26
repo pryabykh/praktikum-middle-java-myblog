@@ -1,5 +1,6 @@
 package com.pryabykh.controller;
 
+import com.pryabykh.dto.CommentDto;
 import com.pryabykh.dto.Page;
 import com.pryabykh.dto.PostDto;
 import com.pryabykh.service.BlogService;
@@ -63,6 +64,21 @@ public class BlogController {
     public String likePost(@PathVariable("id") Long id) {
         blogService.likePost(id);
         return "redirect:/post/" + id;
+    }
+
+    @PostMapping("/create-comment/{postId}")
+    public String createComment(@PathVariable("postId") Long postId,
+                                @ModelAttribute CommentDto commentDto) {
+        blogService.addComment(postId, commentDto);
+        return "redirect:/post/" + postId;
+    }
+
+    @PostMapping("/update-comment/{postId}/{commentId}")
+    public String createComment(@PathVariable("postId") Long postId,
+                                @PathVariable("commentId") Long commentId,
+                                @ModelAttribute CommentDto commentDto) {
+        blogService.updateComment(commentId, commentDto);
+        return "redirect:/post/" + postId;
     }
 
     @GetMapping("/create-post-form")

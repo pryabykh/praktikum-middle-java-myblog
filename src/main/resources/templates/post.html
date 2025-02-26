@@ -24,10 +24,10 @@
             color: white;
             border-radius: 4px;
         }
-        .comment-edit textarea {
+        .comment-edit-comment {
             display: none;
         }
-        .comment-edit.active textarea {
+        .comment-edit-comment.active {
             display: block;
         }
     </style>
@@ -67,44 +67,42 @@
     </div>
 
     <!-- Add Comment Button -->
-    <button onclick="toggleCommentForm()">Add Comment</button>
-
+    <button onclick="toggleCommentForm()">Добавить комментарий</button>
     <!-- Comment Form -->
-    <form id="commentForm" style="display: none;" onsubmit="return submitComment(event)">
-        <textarea id="newCommentText" placeholder="Write your comment..."></textarea>
+    <form th:action="@{/create-comment/} + ${post.id}" method="POST" id="commentForm" style="display: none;">
+        <textarea id="newCommentText" name="content" placeholder="Write your comment..."></textarea>
         <button type="submit">Submit</button>
     </form>
 
     <!-- List of Comments -->
     <div>
-        <h3>Comments</h3>
+        <h3>Комментарии</h3>
         <div th:each="comment, iterStat : ${post.comments}">
             <div class="comment">
                 <!-- Comment Text -->
-                <p th:id="'comment-' + ${iterStat.index}" th:text="${comment.text}"></p>
+                <p th:id="'comment-' + ${iterStat.index}" th:text="${comment.content}"></p>
 
                 <!-- Edit Comment Form -->
-                <div class="comment-edit" th:id="'edit-comment-' + ${iterStat.index}">
-                    <textarea th:value="${comment.text}" style="display: none;"></textarea>
-                    <button onclick="saveComment(this)">Save</button>
+                <div class="comment-edit-comment" th:id="'edit-comment-' + ${iterStat.index}">
+                    <form th:action="@{/update-comment/} + ${post.id} + '/' + ${comment.id}" method="POST" id="commentUpdateForm">
+                        <textarea id="updatedCommentText" name="content" th:text="${comment.content}"></textarea>
+                        <button type="submit">Изменить!</button>
+                    </form>
                     <button onclick="cancelEditComment(this)">Cancel</button>
                 </div>
 
                 <!-- Comment Actions -->
                 <div>
-                    <button onclick="editComment(this)">Edit</button>
-                    <button onclick="deleteComment(this)">Delete</button>
+                    <button onclick="editComment(this)">✏️</button>
+                    <button onclick="deleteComment(this)">🗑</button>
                 </div>
             </div>
+            <hr>
         </div>
     </div>
 </div>
 
 <script>
-    // Like Button Functionality
-    function likePost() {
-
-    }
 
     // Toggle Comment Form
     function toggleCommentForm() {
@@ -138,14 +136,14 @@
     function editComment(button) {
         const commentDiv = button.closest('.comment');
         const commentText = commentDiv.querySelector('p').textContent;
-        const editDiv = commentDiv.querySelector('.comment-edit');
+        const editDiv = commentDiv.querySelector('.comment-edit-comment');
         editDiv.querySelector('textarea').value = commentText;
         editDiv.classList.add('active');
     }
 
     // Save Edited Comment
     function saveComment(button) {
-        const editDiv = button.closest('.comment-edit');
+        const editDiv = button.closest('.comment-edit-comment');
         const commentDiv = editDiv.parentElement;
         const newText = editDiv.querySelector('textarea').value.trim();
         if (newText) {
@@ -156,7 +154,7 @@
 
     // Cancel Edit Comment
     function cancelEditComment(button) {
-        button.closest('.comment-edit').classList.remove('active');
+        button.closest('.comment-edit-comment').classList.remove('active');
     }
 
     // Delete Comment
