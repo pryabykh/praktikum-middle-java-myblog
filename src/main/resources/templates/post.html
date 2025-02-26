@@ -44,7 +44,7 @@
     </div>
 
     <!-- Post Text (Split into Paragraphs) -->
-    <div th:utext="${#strings.replace(post.content, '\n', '</p><p>')}" />
+    <div th:utext="${#strings.replace(post.content, '\n', '<br>')}" />
 
     <!-- Post Tags -->
     <div class="tags">
@@ -110,28 +110,6 @@
         form.style.display = form.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Submit Comment
-    function submitComment(event) {
-        event.preventDefault();
-        const commentText = document.getElementById('newCommentText').value.trim();
-        if (commentText) {
-            // Simulate adding the comment to the DOM
-            const commentsSection = document.querySelector('div > h3 + div');
-            const newComment = document.createElement('div');
-            newComment.className = 'comment';
-            newComment.innerHTML = `
-                    <p>${commentText}</p>
-                    <div>
-                        <button onclick="editComment(this)">Edit</button>
-                        <button onclick="deleteComment(this)">Delete</button>
-                    </div>
-                `;
-            commentsSection.appendChild(newComment);
-            document.getElementById('newCommentText').value = '';
-            toggleCommentForm();
-        }
-    }
-
     // Edit Comment
     function editComment(button) {
         const commentDiv = button.closest('.comment');
@@ -141,26 +119,9 @@
         editDiv.classList.add('active');
     }
 
-    // Save Edited Comment
-    function saveComment(button) {
-        const editDiv = button.closest('.comment-edit-comment');
-        const commentDiv = editDiv.parentElement;
-        const newText = editDiv.querySelector('textarea').value.trim();
-        if (newText) {
-            commentDiv.querySelector('p').textContent = newText;
-        }
-        editDiv.classList.remove('active');
-    }
-
     // Cancel Edit Comment
     function cancelEditComment(button) {
         button.closest('.comment-edit-comment').classList.remove('active');
-    }
-
-    // Delete Comment
-    function deleteComment(button) {
-        const commentDiv = button.closest('.comment');
-        commentDiv.remove();
     }
 </script>
 </body>

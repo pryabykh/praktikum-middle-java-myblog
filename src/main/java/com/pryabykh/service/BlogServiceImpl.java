@@ -77,6 +77,7 @@ public class BlogServiceImpl implements BlogService {
                             .forEach(tag -> postDto.getTags().add(tag.getContent()));
                     commentRepository.findAllByPostId(postDto.getId())
                             .forEach(comment -> postDto.getComments().add(blogMapper.toCommentDto(comment)));
+                    postDto.setContent(postDto.getContent().replace("\r\n", "<br>").replace("\n", "<br>"));
                     return postDto;
                 })
                 .orElseThrow();
