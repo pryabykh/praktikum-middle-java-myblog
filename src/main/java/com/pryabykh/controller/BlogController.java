@@ -74,10 +74,17 @@ public class BlogController {
     }
 
     @PostMapping("/update-comment/{postId}/{commentId}")
-    public String createComment(@PathVariable("postId") Long postId,
+    public String updateComment(@PathVariable("postId") Long postId,
                                 @PathVariable("commentId") Long commentId,
                                 @ModelAttribute CommentDto commentDto) {
         blogService.updateComment(commentId, commentDto);
+        return "redirect:/post/" + postId;
+    }
+
+    @GetMapping("/delete-comment/{postId}/{commentId}")
+    public String deleteComment(@PathVariable("postId") Long postId,
+                                @PathVariable("commentId") Long commentId) {
+        blogService.deleteComment(commentId);
         return "redirect:/post/" + postId;
     }
 

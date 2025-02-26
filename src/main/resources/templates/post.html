@@ -62,8 +62,8 @@
 
     <!-- Like Button -->
     <div>
-        <a th:href="@{/like-post/} + ${post.id}">Поставить лайк</a>
-        <span th:text="'Likes: ' + ${post.likes}">Likes: 0</span>
+        <a th:href="@{/like-post/} + ${post.id}">Поставить 👍</a>
+        <span th:text="'Likes: ' + ${post.likes}">Лайки: 0</span>
     </div>
 
     <!-- Add Comment Button -->
@@ -88,13 +88,13 @@
                         <textarea id="updatedCommentText" name="content" th:text="${comment.content}"></textarea>
                         <button type="submit">Изменить!</button>
                     </form>
-                    <button onclick="cancelEditComment(this)">Cancel</button>
+                    <button onclick="cancelEditComment(this)">Отмена</button>
                 </div>
 
                 <!-- Comment Actions -->
                 <div>
                     <button onclick="editComment(this)">✏️</button>
-                    <button onclick="deleteComment(this)">🗑</button>
+                    <a th:href="@{/delete-comment/} + ${post.id} + '/' + ${comment.id}">🗑</a>
                 </div>
             </div>
             <hr>
