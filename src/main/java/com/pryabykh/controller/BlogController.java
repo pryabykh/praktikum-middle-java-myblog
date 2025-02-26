@@ -20,13 +20,15 @@ public class BlogController {
     @GetMapping
     public String posts(@RequestParam(value = "page", defaultValue = "1") int currentPage,
                         @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                        @RequestParam(value = "tag", required = false) String tag,
                         Model model) {
-        Page page = blogService.findAllPosts(null, currentPage - 1, pageSize);
+        Page page = blogService.findAllPosts(tag, currentPage - 1, pageSize);
         model.addAttribute("posts", page.getContent());
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalElements", page.getTotalElements());
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("pageSize", pageSize);
+        model.addAttribute("tag", tag);
 
         return "posts";
     }
