@@ -62,7 +62,7 @@
 
     <!-- Like Button -->
     <div>
-        <button onclick="likePost()">Like</button>
+        <a th:href="@{/like-post/} + ${post.id}">Поставить лайк</a>
         <span th:text="'Likes: ' + ${post.likes}">Likes: 0</span>
     </div>
 

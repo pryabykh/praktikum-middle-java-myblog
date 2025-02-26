@@ -59,6 +59,12 @@ public class BlogController {
         return "redirect:/"; // Redirect to the feed page
     }
 
+    @GetMapping("/like-post/{id}")
+    public String likePost(@PathVariable("id") Long id) {
+        blogService.likePost(id);
+        return "redirect:/post/" + id;
+    }
+
     @GetMapping("/create-post-form")
     public String showCreatePostForm() {
         return "create-post";
