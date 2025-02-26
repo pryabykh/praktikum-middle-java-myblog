@@ -41,11 +41,11 @@
 <div class="main-container">
     <a th:href="@{/}">На главную</a>
     <div class="form-container" id="userForm">
-        <h2>Добавить пост</h2>
-        <form th:action="@{/create-post}" method="POST">
+        <h2>Изменить пост</h2>
+        <form th:action="@{/update-post/} + ${post.id}" method="POST">
             <br><br><br>
             <label for="title">Заголовок:</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" th:value="${post.title}" required>
 
             <br><br><br>
             <label for="base64image">Картинка:</label>
@@ -53,13 +53,13 @@
             <input type="text" id="base64Image" name="base64Image" hidden/>
             <br><br><br>
             <label for="content">Текст:</label>
-            <textarea id="content" name="content" rows="5" required></textarea>
+            <textarea id="content" name="content" rows="5" th:text="${post.content}" required></textarea>
 
             <br><br><br>
             <label for="tags">Теги через запятую: </label>
-            <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3" required />
+            <input type="text" id="tags" name="tags" placeholder="tag1, tag2, tag3" th:value="${#strings.listJoin(post.tags, ', ')}" required />
             <br><br><br>
-            <button type="submit">Добавить!</button>
+            <button type="submit">Изменить!</button>
         </form>
     </div>
 </div>

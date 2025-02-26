@@ -41,14 +41,28 @@ public class BlogController {
     }
 
     @PostMapping("/create-post")
-    public String save(@ModelAttribute PostDto postDto) {
+    public String create(@ModelAttribute PostDto postDto) {
         blogService.createPost(postDto);
         return "redirect:/"; // Redirect to the feed page
+    }
+
+    @PostMapping("/update-post/{id}")
+    public String create(@PathVariable("id") Long id,
+                         @ModelAttribute PostDto postDto) {
+        blogService.updatePost(id, postDto);
+        return "redirect:/post/" + id; // Redirect to the feed page
     }
 
     @GetMapping("/create-post-form")
     public String createPost() {
         return "create-post";
+    }
+
+    @GetMapping("/update-post-form/{id}")
+    public String updatePost(@PathVariable("id") Long id, Model model) {
+        PostDto post = blogService.findPostById(id);
+        model.addAttribute("post", post);
+        return "update-post";
     }
 
     @GetMapping("/post/{id}")
