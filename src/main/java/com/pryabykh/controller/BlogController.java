@@ -26,6 +26,7 @@ public class BlogController {
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalElements", page.getTotalElements());
         model.addAttribute("currentPage", currentPage);
+        model.addAttribute("pageSize", pageSize);
 
         return "posts";
     }

@@ -45,6 +45,7 @@
             margin-top: 20px;
         }
         .pagination a, .pagination span {
+            font-size: small;
             display: inline-block;
             padding: 8px 12px;
             background-color: #f4f4f4;
@@ -67,6 +68,33 @@
 </head>
 <body>
 <div class="main-container">
+    <!-- Pagination container -->
+    <div class="pagination">
+        <!-- Previous button -->
+        <a th:href="~{} + '?page=' + ${currentPage - 1} + '&pageSize=' + ${pageSize}"
+           th:if="${currentPage > 1}"
+           th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
+
+        <!-- Page numbers -->
+        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+            <a th:href="~{} + '?page=' + ${i} + '&pageSize=' + ${pageSize}"
+               th:text="${i}"
+               th:class="${i == currentPage} ? 'active' : ''" />
+        </th:block>
+
+        <!-- Next button -->
+        <a th:href="~{} + '?page=' + ${currentPage + 1} + '&pageSize=' + ${pageSize}"
+           th:if="${currentPage < totalPages}"
+           th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
+        <span th:text="'Всего: ' + ${totalElements}" />
+    </div>
+    <div class="pagination">
+        <span th:text="'Отображать на странице: '" />
+        <a th:href="~{} + '?pageSize=10'" th:class="${pageSize == 10} ? 'active' : ''">10</a>
+        <a th:href="~{} + '?pageSize=20'" th:class="${pageSize == 20} ? 'active' : ''">20</a>
+        <a th:href="~{} + '?pageSize=50'" th:class="${pageSize == 50} ? 'active' : ''">50</a>
+    </div>
+
     <div class="post-item" th:each="post : ${posts}">
         <h1 th:text="${post.title}"></h1>
         <div th:if="${post.base64Image}">
@@ -82,24 +110,29 @@
     <!-- Pagination container -->
     <div class="pagination">
         <!-- Previous button -->
-        <a th:href="~{} + '?page=' + ${currentPage - 1}"
+        <a th:href="~{} + '?page=' + ${currentPage - 1} + '&pageSize=' + ${pageSize}"
            th:if="${currentPage > 1}"
            th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
 
         <!-- Page numbers -->
         <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
-            <a th:href="~{} + '?page=' + ${i}"
+            <a th:href="~{} + '?page=' + ${i} + '&pageSize=' + ${pageSize}"
                th:text="${i}"
                th:class="${i == currentPage} ? 'active' : ''" />
         </th:block>
 
         <!-- Next button -->
-        <a th:href="~{} + '?page=' + ${currentPage + 1}"
+        <a th:href="~{} + '?page=' + ${currentPage + 1} + '&pageSize=' + ${pageSize}"
            th:if="${currentPage < totalPages}"
            th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
         <span th:text="'Всего: ' + ${totalElements}" />
     </div>
-    <div>Отображать на странице: todo</div>
+    <div class="pagination">
+        <span th:text="'Отображать на странице: '" />
+        <a th:href="~{} + '?pageSize=10'" th:class="${pageSize == 10} ? 'active' : ''">10</a>
+        <a th:href="~{} + '?pageSize=20'" th:class="${pageSize == 20} ? 'active' : ''">20</a>
+        <a th:href="~{} + '?pageSize=50'" th:class="${pageSize == 50} ? 'active' : ''">50</a>
+    </div>
 
 </div>
 </body>
