@@ -138,7 +138,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     private String cutContent(String content) {
-        int charactersSize = 300;
+        int charactersSize = 230;
         if (content.length() > charactersSize) {
             return content.substring(0, charactersSize) + "...";
         } else {
