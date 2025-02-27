@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -250,8 +249,7 @@ public class BlogServiceImplTest {
         verify(commentRepository, times(1)).deleteById(eq(10L));
     }
 
-    @Configuration
-    static class DaoConfig {
+    public static class DaoConfig {
 
         @Bean
         public PostRepository postRepository() {

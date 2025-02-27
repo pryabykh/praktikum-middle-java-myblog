@@ -1,13 +1,11 @@
 package com.pryabykh.repository;
 
-import com.pryabykh.dto.Page;
 import com.pryabykh.model.Post;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface PostRepository {
-
 
     long save(Post post);
 
