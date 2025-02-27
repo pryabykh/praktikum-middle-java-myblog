@@ -8,6 +8,15 @@
 
 Перед стартом приложения нужно убедиться, что существует БД **myblog**
 
-Для удобства можно воспользоваться docker-compose.yml файлом Docker/PostgreSQL16/docker-compose.yml
+Для удобства можно воспользоваться docker-compose.yml файлом Docker/PostgreSQL16/docker-compose.yml для поднятия локальной БД
 
 Данные подключения указываются в **resources/application.properties**
+
+## Maven
+При разработке приложения использовался Maven версии 3.9.9
+
+## Сборка
+Для сборки проекта необходимо запустить команду
+```
+mvn clean package
+```
