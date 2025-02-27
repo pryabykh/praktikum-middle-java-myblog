@@ -1,4 +1,4 @@
-package com.pryabykh;
+package com.pryabykh.configuration;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;

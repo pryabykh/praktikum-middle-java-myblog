@@ -1,4 +1,4 @@
-package configuration;
+package com.pryabykh.configuration;
 
 import org.h2.Driver;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,7 +1,7 @@
 package com.pryabykh.repository;
 
 import com.pryabykh.model.Comment;
-import configuration.H2DataSourceConfiguration;
+import com.pryabykh.configuration.H2DataSourceConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
