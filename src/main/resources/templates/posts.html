@@ -22,8 +22,13 @@
             width: 80%; /* Adjust width as needed */
             max-width: 600px; /* Maximum width for larger screens */
         }
+        h1 {
+            margin-top: 1px;
+        }
         .post-item {
-            border-bottom: 1px solid #ddd;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin: 5px;
         }
         .metainfo {
             background-color: #a87171;
@@ -64,11 +69,12 @@
             border-color: #a87171;
             pointer-events: none; /* Disable clicking on active page */
         }
+        
     </style>
 </head>
 <body>
 <div class="main-container">
-    <a th:href="@{/create-post-form}">Добавить пост</a>
+    <a th:href="@{/create-post-form}">Добавить пост</a><br><br>
     <form th:action="~{}" method="get">
         <label for="tag">Поиск по тегу:</label>
         <input type="text" id="tag" name="tag" placeholder="Ввести тег" />
@@ -76,33 +82,40 @@
         <button type="submit">Search</button>
     </form>
     <p th:if="${tag}">
-        Отфильтровано по тегу: <strong th:text="${tag}"></strong>
+        Отфильтровано по тегу: <strong th:text="${tag}"></strong><br>
+        <a th:href="@{/} + '?pageSize=' + ${pageSize}">Очистить фильтр</a>
     </p>
     <!-- Pagination container -->
-    <div class="pagination">
-        <!-- Previous button -->
-        <a th:href="~{} + '?page=' + ${currentPage - 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
-           th:if="${currentPage > 1}"
-           th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
+    <div th:if="${totalElements != 0}">
+        <div class="pagination">
+            <!-- Previous button -->
+            <a th:href="~{} + '?page=' + ${currentPage - 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
+               th:if="${currentPage > 1}"
+               th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
 
-        <!-- Page numbers -->
-        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
-            <a th:href="~{} + '?page=' + ${i} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
-               th:text="${i}"
-               th:class="${i == currentPage} ? 'active' : ''" />
-        </th:block>
+            <!-- Page numbers -->
+            <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a th:href="~{} + '?page=' + ${i} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
+                   th:text="${i}"
+                   th:class="${i == currentPage} ? 'active' : ''" />
+            </th:block>
 
-        <!-- Next button -->
-        <a th:href="~{} + '?page=' + ${currentPage + 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
-           th:if="${currentPage < totalPages}"
-           th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
-        <span th:text="'Всего: ' + ${totalElements}" />
+            <!-- Next button -->
+            <a th:href="~{} + '?page=' + ${currentPage + 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
+               th:if="${currentPage < totalPages}"
+               th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
+            <span th:text="'Всего: ' + ${totalElements}" />
+        </div>
+        <div class="pagination">
+            <span th:text="'Отображать на странице: '" />
+            <a th:href="~{} + '?pageSize=10' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 10} ? 'active' : ''">10</a>
+            <a th:href="~{} + '?pageSize=20' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 20} ? 'active' : ''">20</a>
+            <a th:href="~{} + '?pageSize=50' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 50} ? 'active' : ''">50</a>
+        </div>
     </div>
-    <div class="pagination">
-        <span th:text="'Отображать на странице: '" />
-        <a th:href="~{} + '?pageSize=10' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 10} ? 'active' : ''">10</a>
-        <a th:href="~{} + '?pageSize=20' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 20} ? 'active' : ''">20</a>
-        <a th:href="~{} + '?pageSize=50' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 50} ? 'active' : ''">50</a>
+
+    <div th:if="${totalElements == 0}">
+        <h2>Пока нет постов, но их можно добавить!</h2>
     </div>
 
     <div class="post-item" th:each="post : ${posts}">
@@ -118,32 +131,33 @@
     </div>
 
     <!-- Pagination container -->
-    <div class="pagination">
-        <!-- Previous button -->
-        <a th:href="~{} + '?page=' + ${currentPage - 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
-           th:if="${currentPage > 1}"
-           th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
+    <div th:if="${totalElements >= 3}">
+        <div class="pagination">
+            <!-- Previous button -->
+            <a th:href="~{} + '?page=' + ${currentPage - 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
+               th:if="${currentPage > 1}"
+               th:class="${currentPage == 1} ? 'disabled' : ''">Назад</a>
 
-        <!-- Page numbers -->
-        <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
-            <a th:href="~{} + '?page=' + ${i} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
-               th:text="${i}"
-               th:class="${i == currentPage} ? 'active' : ''" />
-        </th:block>
+            <!-- Page numbers -->
+            <th:block th:each="i : ${#numbers.sequence(1, totalPages)}">
+                <a th:href="~{} + '?page=' + ${i} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
+                   th:text="${i}"
+                   th:class="${i == currentPage} ? 'active' : ''" />
+            </th:block>
 
-        <!-- Next button -->
-        <a th:href="~{} + '?page=' + ${currentPage + 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
-           th:if="${currentPage < totalPages}"
-           th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
-        <span th:text="'Всего: ' + ${totalElements}" />
+            <!-- Next button -->
+            <a th:href="~{} + '?page=' + ${currentPage + 1} + '&pageSize=' + ${pageSize} + (${tag != null} ? ('&tag=' + ${tag}) : '')"
+               th:if="${currentPage < totalPages}"
+               th:class="${currentPage == totalPages} ? 'disabled' : ''">Следующая</a>
+            <span th:text="'Всего: ' + ${totalElements}" />
+        </div>
+        <div class="pagination">
+            <span th:text="'Отображать на странице: '" />
+            <a th:href="~{} + '?pageSize=10' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 10} ? 'active' : ''">10</a>
+            <a th:href="~{} + '?pageSize=20' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 20} ? 'active' : ''">20</a>
+            <a th:href="~{} + '?pageSize=50' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 50} ? 'active' : ''">50</a>
+        </div>
     </div>
-    <div class="pagination">
-        <span th:text="'Отображать на странице: '" />
-        <a th:href="~{} + '?pageSize=10' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 10} ? 'active' : ''">10</a>
-        <a th:href="~{} + '?pageSize=20' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 20} ? 'active' : ''">20</a>
-        <a th:href="~{} + '?pageSize=50' + (${tag != null} ? ('&tag=' + ${tag}) : '')" th:class="${pageSize == 50} ? 'active' : ''">50</a>
-    </div>
-
 </div>
 </body>
 </html>
