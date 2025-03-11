@@ -7,3 +7,6 @@ spring:
     username: user
     password: pass
     type: com.zaxxer.hikari.HikariDataSource
+  sql:
+    init:
+      mode: always
