@@ -1,4 +1,4 @@
-# praktikum-middle-java-myblog-v1.0
+# praktikum-middle-java-myblog-v2.0
 
 ## Java
 Приложение запускается на версии Java 21
