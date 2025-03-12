@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class BlogControllerTest extends AbstractJdbcTemplateRepositoryTest {
+public class BlogControllerIntegrationTest extends AbstractJdbcTemplateRepositoryTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
